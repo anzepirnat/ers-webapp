@@ -1,0 +1,21 @@
+{% load static %}
+<div class="top-bar">
+    <!-- Home icon -->
+    <a href="{% url 'home' %}">
+        <img src="{% static 'images/home.png' %}" alt="Home" class="icon">
+    </a>
+
+    <!-- Login/Logout icons -->
+    {% if user.is_authenticated %}
+        <form method="POST" action="{% url 'logout' %}" class="logout-form">
+            {% csrf_token %}
+            <button type="submit" class="icon-button">
+                <img src="{% static 'images/logout.png' %}" alt="Logout" class="icon">
+            </button>
+        </form>
+    {% else %}
+        <a href="{% url 'login' %}">
+            <img src="{% static 'images/login.png' %}" alt="Login" class="icon">
+        </a>
+    {% endif %}
+</div>

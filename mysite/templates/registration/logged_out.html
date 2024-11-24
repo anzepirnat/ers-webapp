@@ -1,0 +1,20 @@
+{%load static%}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logged Out</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" >
+    <link rel="stylesheet" type="text/css" href="{% static 'style/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <head>
+            <h1>You have been logged out successfully</h1>
+        </head>
+        <div>
+            <button class="btn" onclick="location.href='{% url 'login' %}'">Log in again</button>
+            <button class="btn" onclick="location.href='{% url 'home' %}'">Home</button>
+        </div>
+    </div>
+</body>
+</html>

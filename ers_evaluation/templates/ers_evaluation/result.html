@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" >
+    <link rel="stylesheet" type="text/css" href="{% static "style/style.css" %}">
+    <script>
+        function confirmDelete(event) {
+            if (!confirm("Are you sure you want to delete this evaluation?")) {
+                event.preventDefault();
+            }
+        }
+    </script>
+</head>
+<body>
+    {% include 'ers_evaluation/top_bar.html' %}
+    <header>
+        <h1>Evaluation Results</h1>
+    </header>
+    {% if evaluations %}
+        <ul>
+            {% for evaluation in evaluations %}
+                <li>
+                    <b>Recommendation:</b> {{ evaluation.recommendation.recommendation_text }}<br>
+                    <b>LLM Text:</b> {{ evaluation.recommendation.llm_text }}<br>
+                    <b>Rating:</b> {{ evaluation.rating }}<br>
+                    <b>Comment:</b> {{ evaluation.comment }}<br>
+                    <button class="btn-small" onclick="location.href='{% url 'edit_evaluation' %}?evaluation_id={{ evaluation.id }}'">Edit</button>
+                    <form method="post" action="{% url 'delete_evaluation' %}" style="display:inline;" onsubmit="confirmDelete(event)">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-small">Delete</button>
+                        <input type="hidden" name="evaluation_id" value="{{ evaluation.id }}">
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div>
+            <p>No evaluations found.</p>
+        </div>
+    {% endif %}
+    <div class="button-group">
+        <button class="btn" onclick="location.href='{% url "evaluation" %}'" style="margin-left: 10px">Make Another Evaluation</button>
+        <button class="btn" onclick="location.href='{% url "index" %}'">ERS Evaluation</button>
+    </div>
+</body>
+</html>

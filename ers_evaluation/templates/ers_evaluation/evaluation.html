@@ -1,0 +1,45 @@
+{%load static%}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Evaluation</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" >
+    <link rel="stylesheet" type="text/css" href="{% static "style/style.css" %}">
+    <script src="{% static 'js/slider.js' %}"></script>
+</head>
+<body>
+    {% include 'ers_evaluation/top_bar.html' %}
+    <header>
+        <h1>Evaluation Page</h1>
+    </header>
+    <form method="post">
+        {% csrf_token %}
+        <ul>
+            {% for recommendation in recommendations %}
+                <li>
+                    <b>Case {{ forloop.counter }}:</b><br><br>
+                    <b>Recommendation:</b> {{ recommendation.recommendation_text }}<br>
+                    <b>LLM Text:</b> {{ recommendation.llm_text }}<br>                    
+                    <label for="rating_{{ recommendation.id }}">Rating: <span id="slider-value-{{ recommendation.id }}">4</span></label>
+                    <input 
+                        type="range" 
+                        id="rating_{{ recommendation.id }}" 
+                        name="rating_{{ recommendation.id }}" 
+                        min="1" 
+                        max="7" 
+                        value="4" 
+                        oninput="updateSliderValue('rating_{{ recommendation.id }}', 'slider-value-{{ recommendation.id }}')"
+                        class="slider">
+                    <label for="comment_{{ recommendation.id }}">Comment:</label>
+                    <textarea id="comment_{{ recommendation.id }}" name="comment_{{ recommendation.id }}" rows="3" cols="40"></textarea>
+                </li>
+            {% empty %}
+                <li>No recommendations available.</li>
+            {% endfor %}
+        </ul>
+        <input type="hidden" name="user_id" value="{{ user_id }}">
+        <button type="submit" class="btn" style="margin-left: 10px">Save</button>
+        <button type="button" class="btn" onclick="location.href='{% url 'index' %}'">Cancel</button>
+    </form>
+</body>
+</html>

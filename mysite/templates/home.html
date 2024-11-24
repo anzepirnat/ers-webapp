@@ -1,0 +1,23 @@
+{%load static%}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" >
+    <link rel="stylesheet" type="text/css" href="{% static 'style/style.css' %}">
+</head>
+<body>
+    {% include 'ers_evaluation/top_bar.html' %}
+    <div class="container">
+        <header>
+            <h1>Welcome to the Home</h1>
+        </header>
+        <main>
+            <div class="button-group">
+                <button class="btn" onclick="location.href='{% url "index" %}'">ERS evaluation</button>
+                <button class="btn" onclick="location.href='{% url "admin:index" %}'">Go to Admin</button>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
