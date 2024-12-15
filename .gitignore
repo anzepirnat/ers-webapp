@@ -1,6 +1,4 @@
 .env
 venv/
 database_backup/
-ers_evaluation/__pycache__/
-mysite/__pycache__/
 *.pyc
