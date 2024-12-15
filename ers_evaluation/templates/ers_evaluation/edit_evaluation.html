@@ -17,6 +17,8 @@
         <ul>
             <li>
                 <b>Recommendation:</b> {{ evaluation.recommendation.recommendation_text }}<br>
+                <b>Context [time, place]: </b>[{{ evaluation.recommendation.cntx_t }}, {{ evaluation.recommendation.cntx_p }}]</b><br>
+                <b>Healthy activities:</b> {{ evaluation.recommendation.answer }}<br>
                 <b>LLM Text:</b> {{ evaluation.recommendation.llm_text }}<br>
                 <label for="rating">Rating: <span id="rating-display">{{ evaluation.rating }}</span></label>
                 <input 

@@ -1,0 +1,23 @@
+{%load static%}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>No results :/</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" >
+    <link rel="stylesheet" type="text/css" href="{% static 'style/style.css' %}">
+</head>
+<body>
+    {% include 'ers_evaluation/top_bar.html' %}
+    <div class="container">
+        <header>
+            <h1>No evaluations available</h1>
+            <p>You will see your evaluations here once you have completed at least one of them. To begin making evaluations please click the button below.</p>
+        </header>
+        <main>
+            <div class="button-group">
+                <button class="btn" onclick="location.href='{% url "evaluation" %}'">Begin evaluation</button>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

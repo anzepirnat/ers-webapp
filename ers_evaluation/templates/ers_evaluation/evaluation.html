@@ -17,8 +17,10 @@
         <ul>
             {% for recommendation in recommendations %}
                 <li>
-                    <b>Case {{ forloop.counter }}:</b><br><br>
+                    <b>Case {{ evaluation_number }}:</b><br><br>
                     <b>Recommendation:</b> {{ recommendation.recommendation_text }}<br>
+                    <b>Context [time, place]: </b>[{{ recommendation.cntx_t }}, {{ recommendation.cntx_p }}]</b><br>
+                    <b>Healthy activities:</b> {{ recommendation.answer }}<br>
                     <b>LLM Text:</b> {{ recommendation.llm_text }}<br>                    
                     <label for="rating_{{ recommendation.id }}">Rating: <span id="slider-value-{{ recommendation.id }}">4</span></label>
                     <input 
@@ -38,8 +40,8 @@
             {% endfor %}
         </ul>
         <input type="hidden" name="user_id" value="{{ user_id }}">
-        <button type="submit" class="btn" style="margin-left: 10px">Save</button>
-        <button type="button" class="btn" onclick="location.href='{% url 'index' %}'">Cancel</button>
+        <button type="submit" class="btn" style="float: right; margin-right: 10px">Next</button>
+        <button type="button" class="btn" style="float: right" onclick="location.href='{% url 'index' %}'">Cancel</button>
     </form>
 </body>
 </html>

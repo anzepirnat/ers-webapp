@@ -11,17 +11,32 @@ def index(request):
 @login_required
 def evaluation(request):
     
+    # Get all recommendations, if there are no recommendations, raise an error
     recommendations = Recommendation.objects.all()
     if not recommendations.exists():
         raise Http404("There are no recommendations to evaluate.")
     
-    selected_texts = random.sample(list(recommendations), 2)  # Chooses 2 random recommendations
+    # Get evalutions that the user has already done, if there are more than XX evaluations, thank them for work
+    completed_evaluations = Evaluation.objects.filter(user_id=request.user.id)
+    if completed_evaluations.count() >= 3:
+        context = {
+            "completed_evaluations_count": completed_evaluations.count()
+        }
+        return render(request, 'ers_evaluation/finished.html', context)
+    
+    # Filter out recommendations that the user has already evaluated
+    completed_evaluations_recommendation_id = [evaluation.recommendation.id for evaluation in completed_evaluations]
+    unevaluated_recommendations = recommendations.exclude(id__in=completed_evaluations_recommendation_id)
+    selected_texts = random.sample(list(unevaluated_recommendations), 1)  # Chooses 2 random recommendations
+    
     context = {
+        "evaluation_number": completed_evaluations.count() + 1,
         "recommendations": selected_texts,
         "user_id": request.user.id
     }
     
-    if request.method == "POST": # When save button gets pressed
+    # When save/next button gets pressed
+    if request.method == "POST":
         user_id = request.POST.get("user_id")
         
         for recommendation in recommendations:
@@ -35,7 +50,7 @@ def evaluation(request):
                     rating=rating,
                     comment=comment if comment else ""
                 )
-        return redirect('result')
+        return redirect('evaluation')
     
     return render(request, 'ers_evaluation/evaluation.html', context)
 
@@ -44,7 +59,7 @@ def result(request):
 
     evaluations = Evaluation.objects.filter(user_id=request.user.id)
     if not evaluations:
-        return HttpResponse("You have not evaluated any recommendations. Click begin evaluation to start.")
+        return render(request, 'ers_evaluation/no_results.html')
     context = {
         "evaluations": evaluations
     }
