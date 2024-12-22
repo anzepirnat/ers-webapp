@@ -1,4 +1,4 @@
-{%load static%}
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,7 +15,7 @@
     <form method="post">
         {% csrf_token %}
         <ul>
-            {% for recommendation in recommendations %}
+            {% if recommendation %}
                 <li>
                     <b>Case {{ evaluation_number }}:</b><br><br>
                     <b>Recommendation:</b> {{ recommendation.recommendation_text }}<br>
@@ -35,11 +35,12 @@
                     <label for="comment_{{ recommendation.id }}">Comment:</label>
                     <textarea id="comment_{{ recommendation.id }}" name="comment_{{ recommendation.id }}" rows="3" cols="40"></textarea>
                 </li>
-            {% empty %}
+            {% else %}
                 <li>No recommendations available.</li>
-            {% endfor %}
+            {% endif %}
         </ul>
         <input type="hidden" name="user_id" value="{{ user_id }}">
+        <input type="hidden" name="recommendation_id" value="{{ recommendation.id }}">
         <button type="submit" class="btn" style="float: right; margin-right: 10px">Next</button>
         <button type="button" class="btn" style="float: right" onclick="location.href='{% url 'index' %}'">Cancel</button>
     </form>

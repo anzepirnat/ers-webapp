@@ -27,29 +27,30 @@ def evaluation(request):
     # Filter out recommendations that the user has already evaluated
     completed_evaluations_recommendation_id = [evaluation.recommendation.id for evaluation in completed_evaluations]
     unevaluated_recommendations = recommendations.exclude(id__in=completed_evaluations_recommendation_id)
-    selected_texts = random.sample(list(unevaluated_recommendations), 1)  # Chooses 2 random recommendations
+    selected_text = random.choice(unevaluated_recommendations)
     
     context = {
         "evaluation_number": completed_evaluations.count() + 1,
-        "recommendations": selected_texts,
+        "recommendation": selected_text,
         "user_id": request.user.id
     }
     
     # When save/next button gets pressed
     if request.method == "POST":
         user_id = request.POST.get("user_id")
+        recommendation_id = int(request.POST.get("recommendation_id"))
+        recommendation = recommendations.filter(id=recommendation_id).first()
+
+        rating = request.POST.get(f"rating_{recommendation.id}")
+        comment = request.POST.get(f"comment_{recommendation.id}")
         
-        for recommendation in recommendations:
-            rating = request.POST.get(f"rating_{recommendation.id}")
-            comment = request.POST.get(f"comment_{recommendation.id}")
-            
-            if rating:
-                Evaluation.objects.create(
-                    recommendation=recommendation,
-                    user_id=user_id,
-                    rating=rating,
-                    comment=comment if comment else ""
-                )
+        Evaluation.objects.create(
+            recommendation=recommendation,
+            user_id=user_id,
+            rating=rating,
+            comment=comment if comment else ""
+        )
+
         return redirect('evaluation')
     
     return render(request, 'ers_evaluation/evaluation.html', context)
