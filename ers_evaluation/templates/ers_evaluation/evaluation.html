@@ -41,8 +41,27 @@
         </ul>
         <input type="hidden" name="user_id" value="{{ user_id }}">
         <input type="hidden" name="recommendation_id" value="{{ recommendation.id }}">
-        <button type="submit" class="btn" style="float: right; margin-right: 10px">Next</button>
-        <button type="button" class="btn" style="float: right" onclick="location.href='{% url 'index' %}'">Cancel</button>
+        <input type="hidden" name="previous_evaluations_id" value="{{ previous_evaluations_id }}">
+        <input type="hidden" name="evaluation_number" value="{{ evaluation_number }}">
+        <button 
+            type="submit" 
+            name="action"
+            value="Save & Continue"
+            class="btn" 
+            style="float: right; margin-right: 10px"
+            >Save & Continue</button>
+        <button 
+            type="submit"
+            name="action"
+            value="back"
+            class="btn"
+            style="float: left; margin-left: 10px"
+            >Back</button>
+        <button 
+            type="button" 
+            class="btn" 
+            style="float: right" 
+            onclick="location.href='{% url 'index' %}'">Cancel</button>
     </form>
 </body>
 </html>
