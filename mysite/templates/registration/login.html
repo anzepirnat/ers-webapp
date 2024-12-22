@@ -2,21 +2,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+    <title>Prijava</title>
     <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" >
     <link rel="stylesheet" type="text/css" href="{% static 'style/style.css' %}">
 </head>
 <body>
     <div class="container">
         <head>
-            <h1>Login</h1>
+            <h1>Prijava</h1>
         </head>
         <main>
             <form method="post">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button class="btn" type="submit">Login</button>
-                <button class="btn" type="button" onclick="window.location.href='{% url 'index' %}'">Cancel</button>
+                <button class="btn" type="submit">Prijavi se</button>
+                <button class="btn" type="button" onclick="window.location.href='{% url 'index' %}'">Prekliči</button>
             </form>
         </main>
     </div>

@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Edit Evaluation</title>
+    <title>Uredi evalvacijo</title>
     <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" >
     <link rel="stylesheet" type="text/css" href="{% static "style/style.css" %}">
     <script src="{% static 'js/slider.js' %}"></script>
@@ -10,17 +10,17 @@
 <body>
     {% include 'ers_evaluation/top_bar.html' %}
     <header>
-        <h1>Edit Evaluation</h1>
+        <h1>Uredi evalvacijo</h1>
     </header>
     <form method="post">
         {% csrf_token %}
         <ul>
             <li>
-                <b>Recommendation:</b> {{ evaluation.recommendation.recommendation_text }}<br>
-                <b>Context [time, place]: </b>[{{ evaluation.recommendation.cntx_t }}, {{ evaluation.recommendation.cntx_p }}]</b><br>
-                <b>Healthy activities:</b> {{ evaluation.recommendation.answer }}<br>
-                <b>LLM Text:</b> {{ evaluation.recommendation.llm_text }}<br>
-                <label for="rating">Rating: <span id="rating-display">{{ evaluation.rating }}</span></label>
+                <b>Priporočilo:</b> {{ evaluation.recommendation.recommendation_text }}<br>
+                <b>Kontekst [čas, kraj]: </b>[{{ evaluation.recommendation.cntx_t }}, {{ evaluation.recommendation.cntx_p }}]</b><br>
+                <b>Zdrave aktivnosti:</b> {{ evaluation.recommendation.answer }}<br>
+                <b>LLM tekst:</b> {{ evaluation.recommendation.llm_text }}<br>
+                <label for="rating">Ocena: <span id="rating-display">{{ evaluation.rating }}</span></label>
                 <input 
                     type="range" 
                     id="rating" 
@@ -30,12 +30,12 @@
                     value="{{ evaluation.rating }}" 
                     oninput="updateSliderValue('rating', 'rating-display')"
                     class="slider">
-                <label for="comment">Comment:</label>
+                <label for="comment">Komentar:</label>
                 <textarea id="comment" name="comment" rows="3" cols="40">{{ evaluation.comment }}</textarea><br>
                 <input type="hidden" name="evaluation_id" value="{{ evaluation.id }}">
             </li>
-            <button type="submit" class="btn" style="margin-left: 10px">Save</button>
-            <button type="button" class="btn" onclick="location.href='{% url 'result' %}'">Cancel</button> <!-- must be type="button" otherwise it defaults to type="submit" which would submit the form and save it. -->
+            <button type="submit" class="btn" style="margin-left: 10px">Shrani</button>
+            <button type="button" class="btn" onclick="location.href='{% url 'result' %}'">Prekliči</button>
         </ul>
     </form>
 </body>

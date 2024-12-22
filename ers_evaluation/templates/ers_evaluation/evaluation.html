@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Evaluation</title>
+    <title>Evalvacija</title>
     <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" >
     <link rel="stylesheet" type="text/css" href="{% static "style/style.css" %}">
     <script src="{% static 'js/slider.js' %}"></script>
@@ -10,19 +10,19 @@
 <body>
     {% include 'ers_evaluation/top_bar.html' %}
     <header>
-        <h1>Evaluation Page</h1>
+        <h1>Evalvacijska stran</h1>
     </header>
     <form method="post">
         {% csrf_token %}
         <ul>
             {% if recommendation and evaluation %} <!-- This is the case where back is used and evaluation also exists. -->
                 <li>
-                    <b>Case {{ evaluation_number }} / {{ max_evaluations }}:</b><br><br>
-                    <b>Recommendation:</b> {{ recommendation.recommendation_text }}<br>
-                    <b>Context [time, place]: </b>[{{ recommendation.cntx_t }}, {{ recommendation.cntx_p }}]</b><br>
-                    <b>Healthy activities:</b> {{ recommendation.answer }}<br>
-                    <b>LLM Text:</b> {{ recommendation.llm_text }}<br>                    
-                    <label for="rating_{{ recommendation.id }}">Rating: <span id="slider-value-{{ recommendation.id }}">4</span></label>
+                    <b>Primer {{ evaluation_number }} / {{ max_evaluations }}:</b><br><br>
+                    <b>Priporočilo:</b> {{ recommendation.recommendation_text }}<br>
+                    <b>Kontekst [čas, kraj]: </b>[{{ recommendation.cntx_t }}, {{ recommendation.cntx_p }}]</b><br>
+                    <b>Zdrave aktivnosti:</b> {{ recommendation.answer }}<br>
+                    <b>LLM tekst:</b> {{ recommendation.llm_text }}<br>                    
+                    <label for="rating_{{ recommendation.id }}">Ocena: <span id="slider-value-{{ recommendation.id }}">{{ evaluation.rating }}</span></label>
                     <input 
                         type="range" 
                         id="rating_{{ recommendation.id }}" 
@@ -32,19 +32,19 @@
                         value="{{ evaluation.rating }}"
                         oninput="updateSliderValue('rating_{{ recommendation.id }}', 'slider-value-{{ recommendation.id }}')"
                         class="slider">
-                    <label for="comment_{{ recommendation.id }}">Comment:</label>
+                    <label for="comment_{{ recommendation.id }}">Komentar:</label>
                     <textarea id="comment_{{ recommendation.id }}" name="comment_{{ recommendation.id }}" rows="3" cols="40">{{ evaluation.comment }}</textarea>
                 </li>
                 <input type="hidden" name="back_btn_flag" value="True">
                 <input type="hidden" name="evaluation_id" value="{{ evaluation.id }}">
             {% elif recommendation %} <!-- This is the normal case where evaluation does not exist. -->
                 <li>
-                    <b>Case {{ evaluation_number }} / {{ max_evaluations }}:</b><br><br>
-                    <b>Recommendation:</b> {{ recommendation.recommendation_text }}<br>
-                    <b>Context [time, place]: </b>[{{ recommendation.cntx_t }}, {{ recommendation.cntx_p }}]</b><br>
-                    <b>Healthy activities:</b> {{ recommendation.answer }}<br>
-                    <b>LLM Text:</b> {{ recommendation.llm_text }}<br>                    
-                    <label for="rating_{{ recommendation.id }}">Rating: <span id="slider-value-{{ recommendation.id }}">4</span></label>
+                    <b>Primer {{ evaluation_number }} / {{ max_evaluations }}:</b><br><br>
+                    <b>Priporočilo:</b> {{ recommendation.recommendation_text }}<br>
+                    <b>Kontekst [čas, kraj]: </b>[{{ recommendation.cntx_t }}, {{ recommendation.cntx_p }}]</b><br>
+                    <b>Zdrave aktivnosti:</b> {{ recommendation.answer }}<br>
+                    <b>LLM tekst:</b> {{ recommendation.llm_text }}<br>                    
+                    <label for="rating_{{ recommendation.id }}">Ocena: <span id="slider-value-{{ recommendation.id }}">4</span></label>
                     <input 
                         type="range" 
                         id="rating_{{ recommendation.id }}" 
@@ -54,12 +54,12 @@
                         value="4" 
                         oninput="updateSliderValue('rating_{{ recommendation.id }}', 'slider-value-{{ recommendation.id }}')"
                         class="slider">
-                    <label for="comment_{{ recommendation.id }}">Comment:</label>
+                    <label for="comment_{{ recommendation.id }}">Komentar:</label>
                     <textarea id="comment_{{ recommendation.id }}" name="comment_{{ recommendation.id }}" rows="3" cols="40"></textarea>
                 </li>
                 <input type="hidden" name="back_btn_flag" value="False">
             {% else %}
-                <li>No recommendations available.</li>
+                <li>Nobenega priporočila ni navoljo.</li>
             {% endif %}
         </ul>
         <input type="hidden" name="user_id" value="{{ user_id }}">
@@ -72,7 +72,7 @@
             value="Save & Continue"
             class="btn" 
             style="float: right; margin-right: 10px"
-            >Save & Continue</button>
+            >Potrdi in nadaljuj</button>
         {% if evaluation_number > 1 %}
             <button 
                 type="submit"
@@ -80,13 +80,13 @@
                 value="back"
                 class="btn"
                 style="float: left; margin-left: 10px"
-                >Back</button>
+                >Nazaj</button>
         {% endif %}
         <button 
             type="button" 
             class="btn" 
             style="float: right" 
-            onclick="location.href='{% url 'index' %}'">Cancel</button>
+            onclick="location.href='{% url 'index' %}'">Izhod brez shrambe</button>
     </form>
 </body>
 </html>
