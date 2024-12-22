@@ -73,13 +73,15 @@
             class="btn" 
             style="float: right; margin-right: 10px"
             >Save & Continue</button>
-        <button 
-            type="submit"
-            name="action"
-            value="back"
-            class="btn"
-            style="float: left; margin-left: 10px"
-            >Back</button>
+        {% if evaluation_number > 1 %}
+            <button 
+                type="submit"
+                name="action"
+                value="back"
+                class="btn"
+                style="float: left; margin-left: 10px"
+                >Back</button>
+        {% endif %}
         <button 
             type="button" 
             class="btn" 
