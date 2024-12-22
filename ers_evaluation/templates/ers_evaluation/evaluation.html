@@ -15,7 +15,29 @@
     <form method="post">
         {% csrf_token %}
         <ul>
-            {% if recommendation %}
+            {% if recommendation and evaluation %} <!-- This is the case where back is used and evaluation also exists. -->
+                <li>
+                    <b>Case {{ evaluation_number }}:</b><br><br>
+                    <b>Recommendation:</b> {{ recommendation.recommendation_text }}<br>
+                    <b>Context [time, place]: </b>[{{ recommendation.cntx_t }}, {{ recommendation.cntx_p }}]</b><br>
+                    <b>Healthy activities:</b> {{ recommendation.answer }}<br>
+                    <b>LLM Text:</b> {{ recommendation.llm_text }}<br>                    
+                    <label for="rating_{{ recommendation.id }}">Rating: <span id="slider-value-{{ recommendation.id }}">4</span></label>
+                    <input 
+                        type="range" 
+                        id="rating_{{ recommendation.id }}" 
+                        name="rating_{{ recommendation.id }}" 
+                        min="1" 
+                        max="7" 
+                        value="{{ evaluation.rating }}"
+                        oninput="updateSliderValue('rating_{{ recommendation.id }}', 'slider-value-{{ recommendation.id }}')"
+                        class="slider">
+                    <label for="comment_{{ recommendation.id }}">Comment:</label>
+                    <textarea id="comment_{{ recommendation.id }}" name="comment_{{ recommendation.id }}" rows="3" cols="40">{{ evaluation.comment }}</textarea>
+                </li>
+                <input type="hidden" name="back_btn_flag" value="True">
+                <input type="hidden" name="evaluation_id" value="{{ evaluation.id }}">
+            {% elif recommendation %} <!-- This is the normal case where evaluation does not exist. -->
                 <li>
                     <b>Case {{ evaluation_number }}:</b><br><br>
                     <b>Recommendation:</b> {{ recommendation.recommendation_text }}<br>
@@ -35,14 +57,36 @@
                     <label for="comment_{{ recommendation.id }}">Comment:</label>
                     <textarea id="comment_{{ recommendation.id }}" name="comment_{{ recommendation.id }}" rows="3" cols="40"></textarea>
                 </li>
+                <input type="hidden" name="back_btn_flag" value="False">
             {% else %}
                 <li>No recommendations available.</li>
             {% endif %}
         </ul>
         <input type="hidden" name="user_id" value="{{ user_id }}">
         <input type="hidden" name="recommendation_id" value="{{ recommendation.id }}">
-        <button type="submit" class="btn" style="float: right; margin-right: 10px">Next</button>
-        <button type="button" class="btn" style="float: right" onclick="location.href='{% url 'index' %}'">Cancel</button>
+        <input type="hidden" name="previous_evaluations_id" value="{{ previous_evaluations_id }}">
+        <input type="hidden" name="evaluation_number" value="{{ evaluation_number }}">
+        <button 
+            type="submit" 
+            name="action"
+            value="Save & Continue"
+            class="btn" 
+            style="float: right; margin-right: 10px"
+            >Save & Continue</button>
+        {% if evaluation_number > 1 %}
+            <button 
+                type="submit"
+                name="action"
+                value="back"
+                class="btn"
+                style="float: left; margin-left: 10px"
+                >Back</button>
+        {% endif %}
+        <button 
+            type="button" 
+            class="btn" 
+            style="float: right" 
+            onclick="location.href='{% url 'index' %}'">Cancel</button>
     </form>
 </body>
 </html>
