@@ -5,6 +5,8 @@ from .models import Recommendation, Evaluation
 from django.contrib.auth.decorators import login_required
 import ast
 
+MAX_EVALUATIONS = 3
+
 def index(request):
     return render(request, 'ers_evaluation/index.html')
 
@@ -19,9 +21,11 @@ def evaluation(request):
     
     # Get evalutions that the user has already done, if there are more than XX evaluations, thank them for work
     completed_evaluations = Evaluation.objects.filter(user_id=request.user.id)
-    if completed_evaluations.count() >= 3:
+    completed_evaluations_count = completed_evaluations.count()
+    if completed_evaluations_count >= MAX_EVALUATIONS:
         context = {
-            "completed_evaluations_count": completed_evaluations.count()
+            "max_evaluations": MAX_EVALUATIONS,
+            "completed_evaluations_count": completed_evaluations_count
         }
         return render(request, 'ers_evaluation/finished.html', context)
     
@@ -31,7 +35,8 @@ def evaluation(request):
     selected_text = random.choice(unevaluated_recommendations)
     
     context = {
-        "evaluation_number": completed_evaluations.count() + 1,
+        "max_evaluations": MAX_EVALUATIONS,
+        "evaluation_number": completed_evaluations_count + 1,
         "previous_evaluations_id": [completed_evaluation.id for completed_evaluation in completed_evaluations],
         "recommendation": selected_text,
         "user_id": request.user.id
@@ -78,6 +83,7 @@ def evaluation(request):
             desired_id = previous_evaluations_id[previous_evaluation_number - 1]
             evaluation = get_object_or_404(Evaluation, id=desired_id)
             context = {
+                "max_evaluations": MAX_EVALUATIONS,
                 "evaluation_number": previous_evaluation_number,
                 "previous_evaluations_id": previous_evaluations_id,
                 "recommendation": evaluation.recommendation,

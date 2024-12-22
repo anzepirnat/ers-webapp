@@ -17,7 +17,7 @@
         <ul>
             {% if recommendation and evaluation %} <!-- This is the case where back is used and evaluation also exists. -->
                 <li>
-                    <b>Case {{ evaluation_number }}:</b><br><br>
+                    <b>Case {{ evaluation_number }} / {{ max_evaluations }}:</b><br><br>
                     <b>Recommendation:</b> {{ recommendation.recommendation_text }}<br>
                     <b>Context [time, place]: </b>[{{ recommendation.cntx_t }}, {{ recommendation.cntx_p }}]</b><br>
                     <b>Healthy activities:</b> {{ recommendation.answer }}<br>
@@ -39,7 +39,7 @@
                 <input type="hidden" name="evaluation_id" value="{{ evaluation.id }}">
             {% elif recommendation %} <!-- This is the normal case where evaluation does not exist. -->
                 <li>
-                    <b>Case {{ evaluation_number }}:</b><br><br>
+                    <b>Case {{ evaluation_number }} / {{ max_evaluations }}:</b><br><br>
                     <b>Recommendation:</b> {{ recommendation.recommendation_text }}<br>
                     <b>Context [time, place]: </b>[{{ recommendation.cntx_t }}, {{ recommendation.cntx_p }}]</b><br>
                     <b>Healthy activities:</b> {{ recommendation.answer }}<br>
