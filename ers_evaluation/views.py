@@ -43,21 +43,46 @@ def evaluation(request):
     
     
     if request.method == "POST":
+        back_btn_flag = request.POST.get("back_btn_flag")
+        print("back_btn_flag: ", back_btn_flag, "back_btn_flag type: ", type(back_btn_flag))
         user_id = request.POST.get("user_id")
         recommendation_id = int(request.POST.get("recommendation_id"))
         recommendation = recommendations.filter(id=recommendation_id).first()
+        print("############################################################################################################")
+        print("recommendation id: ", recommendation_id)
+        print("############################################################################################################")
         action = request.POST.get("action")
 
         if action == "Save & Continue":
-            rating = request.POST.get(f"rating_{recommendation.id}")
-            comment = request.POST.get(f"comment_{recommendation.id}")
             
-            Evaluation.objects.create(
-                recommendation=recommendation,
-                user_id=user_id,
-                rating=rating,
-                comment=comment if comment else ""
-            )
+            if back_btn_flag == "False":
+                            
+                rating = request.POST.get(f"rating_{recommendation.id}")
+                comment = request.POST.get(f"comment_{recommendation.id}")
+                
+                Evaluation.objects.create(
+                    recommendation=recommendation,
+                    user_id=user_id,
+                    rating=rating,
+                    comment=comment if comment else ""
+                )
+                
+            elif back_btn_flag == "True":
+                print("\n")
+                print("back button pressed")
+                evaluation_id = request.POST.get("evaluation_id")
+                print("evaluation_id: ", evaluation_id)
+                evaluation = get_object_or_404(Evaluation, id=evaluation_id)
+                print("evaluation: ", evaluation)
+                evaluation.rating = request.POST.get(f"rating_{recommendation.id}")
+                print("evaluation rating: ", evaluation.rating)
+                evaluation.comment = request.POST.get(f"comment_{recommendation.id}")
+                print("evaluation comment: ", evaluation.comment)
+                evaluation.save()
+                print("evaluation saved")
+                
+            else:
+                return HttpResponse("Error 501: Invalid back button flag", status=501)
 
             return redirect('evaluation')
 
@@ -71,14 +96,17 @@ def evaluation(request):
             print("desired_id: ", desired_id)
             evaluation = get_object_or_404(Evaluation, id=desired_id)
             print("evaluation: ", evaluation, "evaluation type: ", type(evaluation))
+            print("evalution recommendation: ", evaluation.recommendation, "evaluation recommendation type: ", type(evaluation.recommendation))
+            print("evaluation rating: ", evaluation.rating, "evaluation rating type: ", type(evaluation.rating))
+            print("evaluation comment: ", evaluation.comment, "evaluation comment type: ", type(evaluation.comment))
             context = {
                 "evaluation_number": previous_evaluation_number,
                 "previous_evaluations_id": previous_evaluations_id,
-                "recommendations": [evaluation.recommendation],
+                "recommendation": evaluation.recommendation,
+                "evaluation": evaluation,
                 "user_id": user_id
             }
             
-            #return HttpResponse("Back button pressed")
             return render(request, 'ers_evaluation/evaluation.html', context)
     
     return render(request, 'ers_evaluation/evaluation.html', context)
