@@ -2,12 +2,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Results</title>
+    <title>Rezultati</title>
     <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" >
     <link rel="stylesheet" type="text/css" href="{% static "style/style.css" %}">
     <script>
         function confirmDelete(event) {
-            if (!confirm("Are you sure you want to delete this evaluation?")) {
+            if (!confirm("Ali ste prepričani, da želite izbrisati to evalvacijo?")) {
                 event.preventDefault();
             }
         }
@@ -16,22 +16,22 @@
 <body>
     {% include 'ers_evaluation/top_bar.html' %}
     <header>
-        <h1>Evaluation Results</h1>
+        <h1>Rezultati evalvacije</h1>
     </header>
     {% if evaluations %}
         <ul>
             {% for evaluation in evaluations %}
                 <li>
-                    <b>Recommendation:</b> {{ evaluation.recommendation.recommendation_text }}<br>
-                    <b>Context [time, place]: </b>[{{ evaluation.recommendation.cntx_t }}, {{ evaluation.recommendation.cntx_p }}]</b><br>
-                    <b>Healthy activities:</b> {{ evaluation.recommendation.answer }}<br>
-                    <b>LLM Text:</b> {{ evaluation.recommendation.llm_text }}<br>
-                    <b>Rating:</b> {{ evaluation.rating }}<br>
-                    <b>Comment:</b> {{ evaluation.comment }}<br>
-                    <button class="btn-small" onclick="location.href='{% url 'edit_evaluation' %}?evaluation_id={{ evaluation.id }}'">Edit</button>
+                    <b>Priporočilo:</b> {{ evaluation.recommendation.recommendation_text }}<br>
+                    <b>Kontekst [čas, kraj]: </b>[{{ evaluation.recommendation.cntx_t }}, {{ evaluation.recommendation.cntx_p }}]</b><br>
+                    <b>Zdrave aktivnosti:</b> {{ evaluation.recommendation.answer }}<br>
+                    <b>LLM tekst:</b> {{ evaluation.recommendation.llm_text }}<br>
+                    <b>Ocena:</b> {{ evaluation.rating }}<br>
+                    <b>Komentar:</b> {{ evaluation.comment }}<br>
+                    <button class="btn-small" onclick="location.href='{% url 'edit_evaluation' %}?evaluation_id={{ evaluation.id }}'">Uredi</button>
                     <form method="post" action="{% url 'delete_evaluation' %}" style="display:inline;" onsubmit="confirmDelete(event)">
                         {% csrf_token %}
-                        <button type="submit" class="btn-small">Delete</button>
+                        <button type="submit" class="btn-small">Izbriši</button>
                         <input type="hidden" name="evaluation_id" value="{{ evaluation.id }}">
                     </form>
                 </li>
@@ -39,12 +39,12 @@
         </ul>
     {% else %}
         <div>
-            <p>No evaluations found.</p>
+            <p>Rezultati niso navoljo.</p>
         </div>
     {% endif %}
     <div class="button-group">
-        <button class="btn" onclick="location.href='{% url "evaluation" %}'" style="margin-left: 10px">Make Another Evaluation</button>
-        <button class="btn" onclick="location.href='{% url "index" %}'">ERS Evaluation</button>
+        <button class="btn" onclick="location.href='{% url "evaluation" %}'" style="margin-left: 10px">Nadaljuj z evalvacijami</button>
+        <button class="btn" onclick="location.href='{% url "index" %}'">ERS evalvacija</button>
     </div>
 </body>
 </html>

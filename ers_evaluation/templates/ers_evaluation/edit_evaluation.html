@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Edit Evaluation</title>
+    <title>Uredi evalvacijo</title>
     <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" >
     <link rel="stylesheet" type="text/css" href="{% static "style/style.css" %}">
     <script src="{% static 'js/slider.js' %}"></script>
@@ -10,32 +10,51 @@
 <body>
     {% include 'ers_evaluation/top_bar.html' %}
     <header>
-        <h1>Edit Evaluation</h1>
+        <h1>Uredi evalvacijo</h1>
     </header>
     <form method="post">
         {% csrf_token %}
         <ul>
             <li>
-                <b>Recommendation:</b> {{ evaluation.recommendation.recommendation_text }}<br>
-                <b>Context [time, place]: </b>[{{ evaluation.recommendation.cntx_t }}, {{ evaluation.recommendation.cntx_p }}]</b><br>
-                <b>Healthy activities:</b> {{ evaluation.recommendation.answer }}<br>
-                <b>LLM Text:</b> {{ evaluation.recommendation.llm_text }}<br>
-                <label for="rating">Rating: <span id="rating-display">{{ evaluation.rating }}</span></label>
-                <input 
-                    type="range" 
-                    id="rating" 
-                    name="rating" 
-                    min="1" 
-                    max="7" 
-                    value="{{ evaluation.rating }}" 
-                    oninput="updateSliderValue('rating', 'rating-display')"
-                    class="slider">
-                <label for="comment">Comment:</label>
-                <textarea id="comment" name="comment" rows="3" cols="40">{{ evaluation.comment }}</textarea><br>
+                <b>Priporočilo:</b> {{ evaluation.recommendation.recommendation_text }}<br>
+                <b>Kontekst [čas, kraj]: </b>[{{ evaluation.recommendation.cntx_t }}, {{ evaluation.recommendation.cntx_p }}]</b><br>
+                <b>Zdrave aktivnosti:</b> {{ evaluation.recommendation.answer }}<br>
+                <b>LLM tekst:</b> {{ evaluation.recommendation.llm_text }}<br>
+                <div style="height: 20px;"></div>
+                <label for="rating">Ocena: <span id="rating-display">{{ evaluation.rating }}</span></label>
+                <div style="position: relative; width: 100%; height: 40px;">
+                    <input 
+                        type="range" 
+                        id="rating" 
+                        name="rating" 
+                        min="1" 
+                        max="5"
+                        step="1"
+                        value="{{ evaluation.rating }}"
+                        list="steplist"
+                        class="slider">
+                    <datalist id="steplist">
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option value="3"></option>
+                        <option value="4"></option>
+                        <option value="5"></option>
+                    </datalist>
+                    <div style="position: absolute; bottom: -40px; width: 100%; display: flex; justify-content: space-between; padding: 10px 10px 0px 0px;">
+                        <span style="text-align: left; width: 23%;">1 - Popolnoma<br>neustrezno</span>
+                        <span style="text-align: left; width: 17%;">2 - Neustrezno</span>
+                        <span style="text-align: center; width: 20%;">3 - Srednje</span>
+                        <span style="text-align: right; width: 17%;">4 - Ustrezno</span>
+                        <span style="text-align: right; width: 23%;">5 - Zelo<br>ustrezno</span>
+                    </div>
+                </div>
+                <div style="height: 50px;"></div>
+                <label for="comment">Komentar:</label>
+                <textarea id="comment" name="comment" rows="3" cols="40" style="width: calc(100% - 20px);">{{ evaluation.comment }}</textarea><br>
                 <input type="hidden" name="evaluation_id" value="{{ evaluation.id }}">
             </li>
-            <button type="submit" class="btn" style="margin-left: 10px">Save</button>
-            <button type="button" class="btn" onclick="location.href='{% url 'result' %}'">Cancel</button> <!-- must be type="button" otherwise it defaults to type="submit" which would submit the form and save it. -->
+            <button type="submit" class="btn" style="margin-left: 10px">Shrani</button>
+            <button type="button" class="btn" onclick="location.href='{% url 'result' %}'">Prekliči</button>
         </ul>
     </form>
 </body>

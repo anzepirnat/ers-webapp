@@ -5,6 +5,8 @@ from .models import Recommendation, Evaluation
 from django.contrib.auth.decorators import login_required
 import ast
 
+MAX_EVALUATIONS = 3
+
 def index(request):
     return render(request, 'ers_evaluation/index.html')
 
@@ -19,13 +21,11 @@ def evaluation(request):
     
     # Get evalutions that the user has already done, if there are more than XX evaluations, thank them for work
     completed_evaluations = Evaluation.objects.filter(user_id=request.user.id)
-    #print(completed_evaluations)
-    #print(type(completed_evaluations))
-    #print("evaluation id: ", completed_evaluations[0].id)
-    #print("evaluations id: ", [completed_evaluation.id for completed_evaluation in completed_evaluations])
-    if completed_evaluations.count() >= 3:
+    completed_evaluations_count = completed_evaluations.count()
+    if completed_evaluations_count >= MAX_EVALUATIONS:
         context = {
-            "completed_evaluations_count": completed_evaluations.count()
+            "max_evaluations": MAX_EVALUATIONS,
+            "completed_evaluations_count": completed_evaluations_count
         }
         return render(request, 'ers_evaluation/finished.html', context)
     
@@ -35,7 +35,8 @@ def evaluation(request):
     selected_text = random.choice(unevaluated_recommendations)
     
     context = {
-        "evaluation_number": completed_evaluations.count() + 1,
+        "max_evaluations": MAX_EVALUATIONS,
+        "evaluation_number": completed_evaluations_count + 1,
         "previous_evaluations_id": [completed_evaluation.id for completed_evaluation in completed_evaluations],
         "recommendation": selected_text,
         "user_id": request.user.id
@@ -44,13 +45,9 @@ def evaluation(request):
     
     if request.method == "POST":
         back_btn_flag = request.POST.get("back_btn_flag")
-        print("back_btn_flag: ", back_btn_flag, "back_btn_flag type: ", type(back_btn_flag))
         user_id = request.POST.get("user_id")
         recommendation_id = int(request.POST.get("recommendation_id"))
         recommendation = recommendations.filter(id=recommendation_id).first()
-        print("############################################################################################################")
-        print("recommendation id: ", recommendation_id)
-        print("############################################################################################################")
         action = request.POST.get("action")
 
         if action == "Save & Continue":
@@ -68,18 +65,11 @@ def evaluation(request):
                 )
                 
             elif back_btn_flag == "True":
-                print("\n")
-                print("back button pressed")
                 evaluation_id = request.POST.get("evaluation_id")
-                print("evaluation_id: ", evaluation_id)
                 evaluation = get_object_or_404(Evaluation, id=evaluation_id)
-                print("evaluation: ", evaluation)
                 evaluation.rating = request.POST.get(f"rating_{recommendation.id}")
-                print("evaluation rating: ", evaluation.rating)
                 evaluation.comment = request.POST.get(f"comment_{recommendation.id}")
-                print("evaluation comment: ", evaluation.comment)
                 evaluation.save()
-                print("evaluation saved")
                 
             else:
                 return HttpResponse("Error 501: Invalid back button flag", status=501)
@@ -89,17 +79,11 @@ def evaluation(request):
         elif action == "back":
             previous_evaluations_id = request.POST.get("previous_evaluations_id")
             previous_evaluations_id = ast.literal_eval(previous_evaluations_id)
-            print("previous_evaluations_id: ", previous_evaluations_id, "previous_evaluations_id type: ", type(previous_evaluations_id))
             previous_evaluation_number = int(request.POST.get("evaluation_number")) - 1
-            print("previous_evaluation_number: ", previous_evaluation_number, "previous_evaluation_number type: ", type(previous_evaluation_number))
             desired_id = previous_evaluations_id[previous_evaluation_number - 1]
-            print("desired_id: ", desired_id)
             evaluation = get_object_or_404(Evaluation, id=desired_id)
-            print("evaluation: ", evaluation, "evaluation type: ", type(evaluation))
-            print("evalution recommendation: ", evaluation.recommendation, "evaluation recommendation type: ", type(evaluation.recommendation))
-            print("evaluation rating: ", evaluation.rating, "evaluation rating type: ", type(evaluation.rating))
-            print("evaluation comment: ", evaluation.comment, "evaluation comment type: ", type(evaluation.comment))
             context = {
+                "max_evaluations": MAX_EVALUATIONS,
                 "evaluation_number": previous_evaluation_number,
                 "previous_evaluations_id": previous_evaluations_id,
                 "recommendation": evaluation.recommendation,
