@@ -22,16 +22,36 @@
                     <b>Kontekst [čas, kraj]: </b>[{{ recommendation.cntx_t }}, {{ recommendation.cntx_p }}]</b><br>
                     <b>Zdrave aktivnosti:</b> {{ recommendation.answer }}<br>
                     <b>LLM tekst:</b> {{ recommendation.llm_text }}<br>                    
+                    <div style="height: 20px;"></div>
                     <label for="rating_{{ recommendation.id }}">Ocena: <span id="slider-value-{{ recommendation.id }}">{{ evaluation.rating }}</span></label>
-                    <input 
-                        type="range" 
-                        id="rating_{{ recommendation.id }}" 
-                        name="rating_{{ recommendation.id }}" 
-                        min="1" 
-                        max="5" 
-                        value="{{ evaluation.rating }}"
-                        oninput="updateSliderValue('rating_{{ recommendation.id }}', 'slider-value-{{ recommendation.id }}')"
-                        class="slider">
+                    <div style="position: relative; width: 100%; height: 40px;">
+                        <input 
+                            type="range" 
+                            id="rating_{{ recommendation.id }}" 
+                            name="rating_{{ recommendation.id }}" 
+                            min="1" 
+                            max="5"
+                            step="1"
+                            value="{{ evaluation.rating }}"
+                            oninput="updateSliderValue('rating_{{ recommendation.id }}', 'slider-value-{{ recommendation.id }}')"
+                            list="steplist"
+                            class="slider">
+                            <datalist id="steplist">
+                                <option value="1"></option>
+                                <option value="2"></option>
+                                <option value="3"></option>
+                                <option value="4"></option>
+                                <option value="5"></option>
+                            </datalist>
+                            <div style="position: absolute; bottom: -40px; width: 100%; display: flex; justify-content: space-between; padding: 10px 10px 0px 0px;">
+                                <span style="text-align: left; width: 23%;">1 - Popolnoma<br>neustrezno</span>
+                                <span style="text-align: left; width: 17%;">2 - Neustrezno</span>
+                                <span style="text-align: center; width: 20%;">3 - Srednje</span>
+                                <span style="text-align: right; width: 17%;">4 - Ustrezno</span>
+                                <span style="text-align: right; width: 23%;">5 - Zelo<br>ustrezno</span>
+                            </div>
+                    </div>
+                    <div style="height: 50px;"></div>
                     <label for="comment_{{ recommendation.id }}">Komentar:</label>
                     <textarea id="comment_{{ recommendation.id }}" name="comment_{{ recommendation.id }}" rows="3" cols="40">{{ evaluation.comment }}</textarea>
                 </li>
@@ -44,16 +64,36 @@
                     <b>Kontekst [čas, kraj]: </b>[{{ recommendation.cntx_t }}, {{ recommendation.cntx_p }}]</b><br>
                     <b>Zdrave aktivnosti:</b> {{ recommendation.answer }}<br>
                     <b>LLM tekst:</b> {{ recommendation.llm_text }}<br>                    
+                    <div style="height: 20px;"></div>
                     <label for="rating_{{ recommendation.id }}">Ocena: <span id="slider-value-{{ recommendation.id }}">4</span></label>
-                    <input 
-                        type="range" 
-                        id="rating_{{ recommendation.id }}" 
-                        name="rating_{{ recommendation.id }}" 
-                        min="1" 
-                        max="5" 
-                        value="3" 
-                        oninput="updateSliderValue('rating_{{ recommendation.id }}', 'slider-value-{{ recommendation.id }}')"
-                        class="slider">
+                    <div style="position: relative; width: 100%; height: 40px;">
+                        <input 
+                            type="range" 
+                            id="rating_{{ recommendation.id }}" 
+                            name="rating_{{ recommendation.id }}" 
+                            min="1" 
+                            max="5"
+                            step="1"
+                            value="3" 
+                            oninput="updateSliderValue('rating_{{ recommendation.id }}', 'slider-value-{{ recommendation.id }}')"
+                            list="steplist"
+                            class="slider">
+                        <datalist id="steplist">
+                            <option value="1"></option>
+                            <option value="2"></option>
+                            <option value="3"></option>
+                            <option value="4"></option>
+                            <option value="5"></option>
+                        </datalist>
+                        <div style="position: absolute; bottom: -40px; width: 100%; display: flex; justify-content: space-between; padding: 10px 10px 0px 0px;">
+                            <span style="text-align: left; width: 23%;">1 - Popolnoma<br>neustrezno</span>
+                            <span style="text-align: left; width: 17%;">2 - Neustrezno</span>
+                            <span style="text-align: center; width: 20%;">3 - Srednje</span>
+                            <span style="text-align: right; width: 17%;">4 - Ustrezno</span>
+                            <span style="text-align: right; width: 23%;">5 - Zelo<br>ustrezno</span>
+                        </div>
+                    </div>
+                    <div style="height: 50px;"></div>
                     <label for="comment_{{ recommendation.id }}">Komentar:</label>
                     <textarea id="comment_{{ recommendation.id }}" name="comment_{{ recommendation.id }}" rows="3" cols="40"></textarea>
                 </li>
