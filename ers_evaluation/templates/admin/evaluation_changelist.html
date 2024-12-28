@@ -1,0 +1,8 @@
+{% extends "admin/change_list.html" %}
+
+{% block content %}
+<div style="margin-bottom: 20px;">
+    <h3>Note: Each reviewer has to make <b><u>{{ max_evaluations }}</u></b> evaluations!</h3>
+</div>
+{{ block.super }}
+{% endblock %}
