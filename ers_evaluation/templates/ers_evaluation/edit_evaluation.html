@@ -50,7 +50,7 @@
                 </div>
                 <div style="height: 50px;"></div>
                 <label for="comment">Komentar:</label>
-                <textarea id="comment" name="comment" rows="3" cols="40">{{ evaluation.comment }}</textarea><br>
+                <textarea id="comment" name="comment" rows="3" cols="40" style="width: calc(100% - 20px);">{{ evaluation.comment }}</textarea><br>
                 <input type="hidden" name="evaluation_id" value="{{ evaluation.id }}">
             </li>
             <button type="submit" class="btn" style="margin-left: 10px">Shrani</button>
