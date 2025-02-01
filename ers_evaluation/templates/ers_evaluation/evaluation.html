@@ -17,7 +17,12 @@
         <ul>
             {% if recommendation and evaluation %} <!-- This is the case where back is used and evaluation also exists. -->
                 <li>
-                    <b>Primer {{ evaluation_number }} / {{ max_evaluations }}:</b><br><br>
+                    <div style="display: flex; gap: 5px;">
+                        <b>Primer: </b>
+                        {% for i in evaluation_range %}
+                            <div style="width: 20px; height: 20px; border-radius: 50%; background: {% if i <= evaluation_number %}#658E9C{% else %}#9b9b9b{% endif %};"></div>
+                        {% endfor %}
+                    </div>
                     <b>Priporočilo:</b> {{ recommendation.recommendation_text }}<br>
                     <b>Kontekst [čas, kraj]: </b>[{{ recommendation.cntx_t }}, {{ recommendation.cntx_p }}]</b><br>
                     <b>Zdrave aktivnosti:</b> {{ recommendation.answer }}<br>
@@ -59,7 +64,12 @@
                 <input type="hidden" name="evaluation_id" value="{{ evaluation.id }}">
             {% elif recommendation %} <!-- This is the normal case where evaluation does not exist. -->
                 <li>
-                    <b>Primer {{ evaluation_number }} / {{ max_evaluations }}:</b><br><br>
+                    <div style="display: flex; gap: 5px;">
+                        <b>Primer: </b>
+                        {% for i in evaluation_range %}
+                            <div style="width: 20px; height: 20px; border-radius: 50%; background: {% if i <= evaluation_number %}#658E9C{% else %}#9b9b9b{% endif %};"></div>
+                        {% endfor %}
+                    </div>                          
                     <b>Priporočilo:</b> {{ recommendation.recommendation_text }}<br>
                     <b>Kontekst [čas, kraj]: </b>[{{ recommendation.cntx_t }}, {{ recommendation.cntx_p }}]</b><br>
                     <b>Zdrave aktivnosti:</b> {{ recommendation.answer }}<br>

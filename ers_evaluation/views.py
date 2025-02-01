@@ -25,6 +25,7 @@ def evaluation(request):
     if completed_evaluations_count >= MAX_EVALUATIONS:
         context = {
             "max_evaluations": MAX_EVALUATIONS,
+            "evaluation_range": range(1, MAX_EVALUATIONS + 1),
             "completed_evaluations_count": completed_evaluations_count
         }
         return render(request, 'ers_evaluation/finished.html', context)
@@ -36,6 +37,7 @@ def evaluation(request):
     
     context = {
         "max_evaluations": MAX_EVALUATIONS,
+        "evaluation_range": range(1, MAX_EVALUATIONS + 1),
         "evaluation_number": completed_evaluations_count + 1,
         "previous_evaluations_id": [completed_evaluation.id for completed_evaluation in completed_evaluations],
         "recommendation": selected_text,
@@ -84,6 +86,7 @@ def evaluation(request):
             evaluation = get_object_or_404(Evaluation, id=desired_id)
             context = {
                 "max_evaluations": MAX_EVALUATIONS,
+                "evaluation_range": range(1, MAX_EVALUATIONS + 1),
                 "evaluation_number": previous_evaluation_number,
                 "previous_evaluations_id": previous_evaluations_id,
                 "recommendation": evaluation.recommendation,
