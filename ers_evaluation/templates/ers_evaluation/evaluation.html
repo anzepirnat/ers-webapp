@@ -120,23 +120,27 @@
             type="submit" 
             name="action"
             value="Save & Continue"
-            class="btn" 
-            style="float: right; margin-right: 10px"
-            >Potrdi in nadaljuj</button>
+            style="float: right; margin-right: 10px; background: none; border: none; padding: 0;">
+            <img src="{% static 'images/SaveAndContinue.png' %}" alt="SaveAndContinue" 
+                style="width: 45px; height: 45px; background: none; display: block;">
+        </button>
         {% if evaluation_number > 1 %}
             <button 
                 type="submit"
                 name="action"
                 value="back"
-                class="btn"
-                style="float: left; margin-left: 10px"
-                >Nazaj</button>
+                style="float: left; margin-left: 10px; background: none; border: none; padding: 0;">
+                <img src="{% static 'images/<.png' %}" alt="Back" 
+                    style="width: 45px; height: 45px; background: none; display: block;">
+            </button>    
         {% endif %}
         <button 
             type="button" 
-            class="btn" 
-            style="float: right" 
-            onclick="location.href='{% url 'index' %}'">Izhod brez shrambe</button>
+            style="float: right; background: none; border: none; padding: 0; margin-right: 10px;" 
+            onclick="location.href='{% url 'index' %}'">
+            <img src="{% static 'images/NotSave.png' %}" alt="Exit" 
+                style="width: 45px; height: 45px; background: none; display: block;">
+        </button>
     </form>
 </body>
 </html>

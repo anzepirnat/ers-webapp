@@ -28,10 +28,14 @@
                     <b>LLM tekst:</b> {{ evaluation.recommendation.llm_text }}<br>
                     <b>Ocena:</b> {{ evaluation.rating }}<br>
                     <b>Komentar:</b> {{ evaluation.comment }}<br>
-                    <button class="btn-small" onclick="location.href='{% url 'edit_evaluation' %}?evaluation_id={{ evaluation.id }}'">Uredi</button>
+                    <button style="background: none; border: none; margin-top: 10px;" onclick="location.href='{% url 'edit_evaluation' %}?evaluation_id={{ evaluation.id }}'">
+                        <img src="{% static 'images/edit.png' %}" alt="Uredi" style="width: 35px; height: 35px;">
+                    </button>                    
                     <form method="post" action="{% url 'delete_evaluation' %}" style="display:inline;" onsubmit="confirmDelete(event)">
                         {% csrf_token %}
-                        <button type="submit" class="btn-small">Izbriši</button>
+                        <button type="submit" style="background: none; border: none;">
+                            <img src="{% static 'images/delete.png' %}" alt="Izbriši" style="width: 35px; height: 35px;">
+                        </button>                        
                         <input type="hidden" name="evaluation_id" value="{{ evaluation.id }}">
                     </form>
                 </li>
