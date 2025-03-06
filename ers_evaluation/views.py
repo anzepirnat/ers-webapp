@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, Http404
 import random
-from .models import Recommendation, Evaluation
+from .models import Recommendation, Evaluation, RecsContextsExplsA3
 from django.contrib.auth.decorators import login_required
 import ast
 
@@ -134,3 +134,33 @@ def edit_evaluation(request):
         "evaluation": evaluation
     }
     return render(request, 'ers_evaluation/edit_evaluation.html', context)
+
+from .utils import excel_to_db, log
+from django.core.exceptions import ValidationError
+from django.http import JsonResponse
+from .forms import UploadExcelForm
+from django.db import connection
+
+def reset_auto_increment(table_name):
+    """ Reset auto-increment counter for a table in MariaDB """
+    with connection.cursor() as cursor:
+        cursor.execute(f"ALTER TABLE {table_name} AUTO_INCREMENT = 1")
+
+@login_required
+def edit_data(request):
+    if request.method == 'POST' and request.FILES['excel_file']:
+        try:
+            excel_file = request.FILES['excel_file'] # Get new data
+            RecsContextsExplsA3.objects.all().delete() # Delete old data
+            reset_auto_increment('ers_evaluation_recscontextsexplsa3') # Id to 1
+            result = excel_to_db(excel_file) # Write new data
+            
+            return JsonResponse({'message': result}, status=200)
+        
+        except ValidationError as e:
+            log.error("Validation error: %s", e)
+            return JsonResponse({'error': str(e)}, status=400)
+
+    # If it's a GET request, just render the page with the file upload form
+    form = UploadExcelForm()
+    return render(request, 'ers_evaluation/edit_data.html', {'form': form})

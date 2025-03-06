@@ -1,0 +1,47 @@
+<!-- edit_data.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Data</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" >
+    <link rel="stylesheet" type="text/css" href="{% static "style/style.css" %}">
+</head>
+<body>
+    <h1>Uredi podatke</h1>
+
+    <!-- Form to upload Excel file -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="button-group">
+            {{ form.as_p }}
+            <button class="btn" type="submit">Naloži Excel</button>
+        </div>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        // Handle the form submission and show the result message
+        const form = document.querySelector('form');
+        form.onsubmit = function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            fetch('', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').textContent = data.message || data.error;
+            })
+            .catch(error => {
+                document.getElementById('result').textContent = "Error: " + error;
+            });
+        };
+    </script>
+</body>
+</html>
