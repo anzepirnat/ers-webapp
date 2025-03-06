@@ -19,3 +19,14 @@ class Evaluation(models.Model):
     
     def __int__(self):
         return self.rating
+        
+class RecsContextsExplsA3(models.Model):
+    elder_id = models.IntegerField() # uID
+    activity_ids = models.CharField(max_length=100) # actID_lst
+    activity_texts = models.CharField(max_length=300) # actTxt_lst
+    context_time = models.CharField(max_length=100) # C_T
+    context_place = models.CharField(max_length=100) # C_P
+    explanation = models.CharField(max_length=1000) # Expl
+    
+    def __str__(self):
+        return self.explanation
