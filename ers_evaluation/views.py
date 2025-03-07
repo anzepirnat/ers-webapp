@@ -35,13 +35,17 @@ def evaluation(request):
     unevaluated_recommendations = recommendations.exclude(id__in=completed_evaluations_recommendation_id)
     selected_text = unevaluated_recommendations[0]
     
+    # choosing the image to display
+    annot_path = f"annots/annotImg_uID-{selected_text.elder_id}.png"
+    
     log.info(f"selected_text.id: {selected_text.id}")
     
     context = {
         "max_evaluations": MAX_EVALUATIONS,
         "evaluation_number": completed_evaluations_count + 1,
         "recommendation": selected_text,
-        "user_id": request.user.id
+        "user_id": request.user.id,
+        "annot_path": annot_path
     }
     
     if request.method == "POST":
@@ -49,17 +53,11 @@ def evaluation(request):
         recommendation_id = int(request.POST.get("recommendation_id"))
         recommendation = recommendations.filter(id=recommendation_id).first()
         action = request.POST.get("action")
-        
-        log.debug(f"User {user_id} selected action {action} for recommendation {remove_comma(recommendation.activity_texts)}")
-        log.debug(f"recommendation_id: {recommendation_id}")
-        log.debug(f"recommendation: {recommendation.id}")
 
         if action == "Save & Continue":
                                         
             rating = request.POST.get(f"rating_{recommendation.id}")
             comment = request.POST.get(f"comment_{recommendation.id}")
-            
-            log.info(f"rating: {rating}, comment: {comment}")
             
             Evaluation.objects.create(
                 recommendation=recommendation,
