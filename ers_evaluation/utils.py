@@ -33,6 +33,12 @@ def remove_parantheses(text):
 def remove_quotes(text):
     return text.replace("'", "")
 
+def remove_comma(text):
+    if text[-1] == ",": 
+        return text.replace(',', '')
+    else:
+        return text
+
 def replace_slo_words(text):
     return text.replace('č', 'c').replace('ć', 'c').replace('š', 's').replace('đ', 'd').replace('ž', 'z')
 

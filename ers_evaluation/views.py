@@ -4,8 +4,9 @@ import random
 from .models import Recommendation, Evaluation, RecsContextsExplsA3
 from django.contrib.auth.decorators import login_required
 import ast
+from .utils import remove_comma
 
-MAX_EVALUATIONS = 3
+MAX_EVALUATIONS = 20
 
 def index(request):
     return render(request, 'ers_evaluation/index.html')
@@ -15,7 +16,7 @@ def index(request):
 def evaluation(request):
     
     # Get all recommendations, if there are no recommendations, raise an error
-    recommendations = Recommendation.objects.all()
+    recommendations = RecsContextsExplsA3.objects.all()
     if not recommendations.exists():
         raise Http404("There are no recommendations to evaluate.")
     
@@ -32,66 +33,42 @@ def evaluation(request):
     # Filter out recommendations that the user has already evaluated
     completed_evaluations_recommendation_id = [evaluation.recommendation.id for evaluation in completed_evaluations]
     unevaluated_recommendations = recommendations.exclude(id__in=completed_evaluations_recommendation_id)
-    selected_text = random.choice(unevaluated_recommendations)
+    selected_text = unevaluated_recommendations[0]
+    
+    log.info(f"selected_text.id: {selected_text.id}")
     
     context = {
         "max_evaluations": MAX_EVALUATIONS,
         "evaluation_number": completed_evaluations_count + 1,
-        "previous_evaluations_id": [completed_evaluation.id for completed_evaluation in completed_evaluations],
         "recommendation": selected_text,
         "user_id": request.user.id
     }
     
-    
     if request.method == "POST":
-        back_btn_flag = request.POST.get("back_btn_flag")
         user_id = request.POST.get("user_id")
         recommendation_id = int(request.POST.get("recommendation_id"))
         recommendation = recommendations.filter(id=recommendation_id).first()
         action = request.POST.get("action")
+        
+        log.debug(f"User {user_id} selected action {action} for recommendation {remove_comma(recommendation.activity_texts)}")
+        log.debug(f"recommendation_id: {recommendation_id}")
+        log.debug(f"recommendation: {recommendation.id}")
 
         if action == "Save & Continue":
+                                        
+            rating = request.POST.get(f"rating_{recommendation.id}")
+            comment = request.POST.get(f"comment_{recommendation.id}")
             
-            if back_btn_flag == "False":
-                            
-                rating = request.POST.get(f"rating_{recommendation.id}")
-                comment = request.POST.get(f"comment_{recommendation.id}")
+            log.info(f"rating: {rating}, comment: {comment}")
+            
+            Evaluation.objects.create(
+                recommendation=recommendation,
+                user_id=user_id,
+                rating=rating,
+                comment=comment if comment else ""
+            )
                 
-                Evaluation.objects.create(
-                    recommendation=recommendation,
-                    user_id=user_id,
-                    rating=rating,
-                    comment=comment if comment else ""
-                )
-                
-            elif back_btn_flag == "True":
-                evaluation_id = request.POST.get("evaluation_id")
-                evaluation = get_object_or_404(Evaluation, id=evaluation_id)
-                evaluation.rating = request.POST.get(f"rating_{recommendation.id}")
-                evaluation.comment = request.POST.get(f"comment_{recommendation.id}")
-                evaluation.save()
-                
-            else:
-                return HttpResponse("Error 501: Invalid back button flag", status=501)
-
             return redirect('evaluation')
-
-        elif action == "back":
-            previous_evaluations_id = request.POST.get("previous_evaluations_id")
-            previous_evaluations_id = ast.literal_eval(previous_evaluations_id)
-            previous_evaluation_number = int(request.POST.get("evaluation_number")) - 1
-            desired_id = previous_evaluations_id[previous_evaluation_number - 1]
-            evaluation = get_object_or_404(Evaluation, id=desired_id)
-            context = {
-                "max_evaluations": MAX_EVALUATIONS,
-                "evaluation_number": previous_evaluation_number,
-                "previous_evaluations_id": previous_evaluations_id,
-                "recommendation": evaluation.recommendation,
-                "evaluation": evaluation,
-                "user_id": user_id
-            }
-            
-            return render(request, 'ers_evaluation/evaluation.html', context)
     
     return render(request, 'ers_evaluation/evaluation.html', context)
 

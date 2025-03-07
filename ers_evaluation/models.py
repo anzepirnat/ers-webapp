@@ -9,17 +9,8 @@ class Recommendation(models.Model):
     
     def __str__(self):
         return self.recommendation_text
-    
-    
-class Evaluation(models.Model):
-    recommendation = models.ForeignKey(Recommendation, on_delete=models.CASCADE)
-    user_id = models.IntegerField() # User ID
-    rating = models.IntegerField() # Rating of the LLM text
-    comment = models.CharField(max_length=300) # Comment on the LLM text
-    
-    def __int__(self):
-        return self.rating
-        
+
+
 class RecsContextsExplsA3(models.Model):
     elder_id = models.IntegerField() # uID
     activity_ids = models.CharField(max_length=100) # actID_lst
@@ -29,4 +20,16 @@ class RecsContextsExplsA3(models.Model):
     explanation = models.CharField(max_length=1000) # Expl
     
     def __str__(self):
-        return self.explanation
+        return self.explanation    
+
+    
+class Evaluation(models.Model):
+    #recommendation = models.ForeignKey(Recommendation, on_delete=models.CASCADE)
+    recommendation = models.ForeignKey(RecsContextsExplsA3, on_delete=models.CASCADE)
+    user_id = models.IntegerField() # User ID
+    rating = models.IntegerField() # Rating of the LLM text
+    comment = models.CharField(max_length=300) # Comment on the LLM text
+    
+    def __int__(self):
+        return self.rating
+

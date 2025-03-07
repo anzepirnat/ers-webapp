@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Page Layout with Spacing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100vh; /* Full viewport height */
+            gap: 5px; /* Adds spacing between .container and .full-width */
+            padding: 5px; /* Adds spacing around the entire layout */
+        }
+
+        .container {
+            display: flex;
+            flex: 2; /* Takes 2/3 of the height */
+            gap: 5px; /* Adds spacing between left and right divs */
+        }
+
+        .left {
+            width: calc(66.66% - 2.5px); /* Subtract half of the gap to keep exact proportions */
+            background-color: lightblue;
+            padding: 10px;
+        }
+
+        .right {
+            width: calc(33.33% - 2.5px);
+            background-color: lightcoral;
+            padding: 10px;
+        }
+
+        .full-width {
+            flex: 1; /* Takes 1/3 of the height */
+            background-color: lightgreen;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <div class="container">
+            <div class="left">
+                <p>Div 1</p>
+            </div>
+            <div class="right">
+                <p>Div 2</p>
+            </div>
+        </div>
+
+        <div class="full-width">
+            <p>Div 3</p>
+        </div>
+    </div>
+
+</body>
+</html>
