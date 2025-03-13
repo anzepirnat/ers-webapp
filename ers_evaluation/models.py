@@ -9,13 +9,51 @@ class Recommendation(models.Model):
     
     def __str__(self):
         return self.recommendation_text
+
+
+class RecsContextsExplsA3(models.Model):
+    elder_id = models.IntegerField() # uID
+    activity_ids = models.CharField(max_length=100) # actID_lst
+    activity_texts = models.CharField(max_length=300) # actTxt_lst
+    context_time = models.CharField(max_length=100) # C_T
+    context_place = models.CharField(max_length=100) # C_P
+    explanation = models.CharField(max_length=1000) # Expl
     
+    def __str__(self):
+        return self.explanation    
+
     
 class Evaluation(models.Model):
-    recommendation = models.ForeignKey(Recommendation, on_delete=models.CASCADE)
+    #recommendation = models.ForeignKey(Recommendation, on_delete=models.CASCADE)
+    recommendation = models.ForeignKey(RecsContextsExplsA3, on_delete=models.CASCADE)
     user_id = models.IntegerField() # User ID
     rating = models.IntegerField() # Rating of the LLM text
     comment = models.CharField(max_length=300) # Comment on the LLM text
     
     def __int__(self):
         return self.rating
+    
+
+class Randomization(models.Model):
+    rnd1 = models.IntegerField()
+    rnd2 = models.IntegerField()
+    rnd3 = models.IntegerField()
+    rnd4 = models.IntegerField()
+    rnd5 = models.IntegerField()
+    rnd6 = models.IntegerField()
+    rnd7 = models.IntegerField()
+    rnd8 = models.IntegerField()
+    rnd9 = models.IntegerField()
+    rnd10 = models.IntegerField()
+    rnd11 = models.IntegerField()
+    rnd12 = models.IntegerField()
+    rnd13 = models.IntegerField()
+    rnd14 = models.IntegerField()
+    rnd15 = models.IntegerField()
+    rnd16 = models.IntegerField()
+    rnd17 = models.IntegerField()
+    rnd18 = models.IntegerField()
+    rnd19 = models.IntegerField()
+    rnd20 = models.IntegerField()
+
+

@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, Http404
 import random
-from .models import Recommendation, Evaluation
+from .models import Recommendation, Evaluation, RecsContextsExplsA3, Randomization
 from django.contrib.auth.decorators import login_required
 import ast
+from .utils import remove_last_comma
 
-MAX_EVALUATIONS = 3
+MAX_EVALUATIONS = 20
 
 def index(request):
     return render(request, 'ers_evaluation/index.html')
@@ -15,7 +16,7 @@ def index(request):
 def evaluation(request):
     
     # Get all recommendations, if there are no recommendations, raise an error
-    recommendations = Recommendation.objects.all()
+    recommendations = RecsContextsExplsA3.objects.all()
     if not recommendations.exists():
         raise Http404("There are no recommendations to evaluate.")
     
@@ -31,67 +32,56 @@ def evaluation(request):
     
     # Filter out recommendations that the user has already evaluated
     completed_evaluations_recommendation_id = [evaluation.recommendation.id for evaluation in completed_evaluations]
-    unevaluated_recommendations = recommendations.exclude(id__in=completed_evaluations_recommendation_id)
-    selected_text = random.choice(unevaluated_recommendations)
+    unevaluated_recommendations_ids = set(recommendations.exclude(id__in=completed_evaluations_recommendation_id).values_list('id', flat=True))
+    
+    # Selecting text will work based on user_id, so basically:
+    # 1. Get all Randomization table
+    randomization = Randomization.objects.all()
+    # 2. Get correct column for the user 
+    user_rnd_values = randomization.values_list(f"rnd{request.user.id}", flat=True)
+    # 3. Go through the rows and check for each if the id is in it. return error if it isnt found
+    selected_text = None
+    for rnd_value in user_rnd_values:
+        if rnd_value in unevaluated_recommendations_ids:
+            selected_text = recommendations.get(id=rnd_value)
+            break
+    if not selected_text: raise Http404("There are no recommendations to evaluate.")
+    
+    # choosing the image to display
+    annot_path = f"annots/annotImg_uID-{selected_text.elder_id}.png"
+    
+    log.info(f"selected_text.id: {selected_text.id}")
+    
+    activity_texts = selected_text.activity_texts.split(", ")
     
     context = {
         "max_evaluations": MAX_EVALUATIONS,
         "evaluation_number": completed_evaluations_count + 1,
-        "previous_evaluations_id": [completed_evaluation.id for completed_evaluation in completed_evaluations],
         "recommendation": selected_text,
-        "user_id": request.user.id
+        "user_id": request.user.id,
+        "annot_path": annot_path,
+        "activity_texts": activity_texts
     }
     
-    
     if request.method == "POST":
-        back_btn_flag = request.POST.get("back_btn_flag")
         user_id = request.POST.get("user_id")
         recommendation_id = int(request.POST.get("recommendation_id"))
         recommendation = recommendations.filter(id=recommendation_id).first()
         action = request.POST.get("action")
 
         if action == "Save & Continue":
+                                        
+            rating = request.POST.get(f"rating_{recommendation.id}")
+            comment = request.POST.get(f"comment_{recommendation.id}")
             
-            if back_btn_flag == "False":
-                            
-                rating = request.POST.get(f"rating_{recommendation.id}")
-                comment = request.POST.get(f"comment_{recommendation.id}")
+            Evaluation.objects.create(
+                recommendation=recommendation,
+                user_id=user_id,
+                rating=rating,
+                comment=comment if comment else ""
+            )
                 
-                Evaluation.objects.create(
-                    recommendation=recommendation,
-                    user_id=user_id,
-                    rating=rating,
-                    comment=comment if comment else ""
-                )
-                
-            elif back_btn_flag == "True":
-                evaluation_id = request.POST.get("evaluation_id")
-                evaluation = get_object_or_404(Evaluation, id=evaluation_id)
-                evaluation.rating = request.POST.get(f"rating_{recommendation.id}")
-                evaluation.comment = request.POST.get(f"comment_{recommendation.id}")
-                evaluation.save()
-                
-            else:
-                return HttpResponse("Error 501: Invalid back button flag", status=501)
-
             return redirect('evaluation')
-
-        elif action == "back":
-            previous_evaluations_id = request.POST.get("previous_evaluations_id")
-            previous_evaluations_id = ast.literal_eval(previous_evaluations_id)
-            previous_evaluation_number = int(request.POST.get("evaluation_number")) - 1
-            desired_id = previous_evaluations_id[previous_evaluation_number - 1]
-            evaluation = get_object_or_404(Evaluation, id=desired_id)
-            context = {
-                "max_evaluations": MAX_EVALUATIONS,
-                "evaluation_number": previous_evaluation_number,
-                "previous_evaluations_id": previous_evaluations_id,
-                "recommendation": evaluation.recommendation,
-                "evaluation": evaluation,
-                "user_id": user_id
-            }
-            
-            return render(request, 'ers_evaluation/evaluation.html', context)
     
     return render(request, 'ers_evaluation/evaluation.html', context)
 
@@ -134,3 +124,53 @@ def edit_evaluation(request):
         "evaluation": evaluation
     }
     return render(request, 'ers_evaluation/edit_evaluation.html', context)
+
+from .utils import excel_to_db, log, excel_to_db_randomization
+from django.core.exceptions import ValidationError
+from django.http import JsonResponse
+from .forms import UploadExcelForm
+from django.db import connection
+
+def reset_auto_increment(table_name):
+    """ Reset auto-increment counter for a table in MariaDB """
+    with connection.cursor() as cursor:
+        cursor.execute(f"ALTER TABLE {table_name} AUTO_INCREMENT = 1")
+
+@login_required
+def edit_data(request):
+    if request.method == 'POST' and request.FILES['excel_file']:
+        try:
+            excel_file = request.FILES['excel_file'] # Get new data
+            RecsContextsExplsA3.objects.all().delete() # Delete old data
+            reset_auto_increment('ers_evaluation_recscontextsexplsa3') # Id to 1
+            result = excel_to_db(excel_file) # Write new data
+            
+            return JsonResponse({'message': result}, status=200)
+        
+        except ValidationError as e:
+            log.error("Validation error: %s", e)
+            return JsonResponse({'error': str(e)}, status=400)
+
+    # If it's a GET request, just render the page with the file upload form
+    form = UploadExcelForm()
+    return render(request, 'ers_evaluation/edit_data.html', {'form': form})
+
+
+@login_required
+def edit_data_randomization(request):
+    if request.method == 'POST' and request.FILES['excel_file']:
+        try:
+            excel_file = request.FILES['excel_file'] # Get new data
+            Randomization.objects.all().delete() # Delete old data
+            reset_auto_increment('ers_evaluation_recscontextsexplsa3') # Id to 1
+            result = excel_to_db_randomization(excel_file) # Write new data
+            
+            return JsonResponse({'message': result}, status=200)
+        
+        except ValidationError as e:
+            log.error("Validation error: %s", e)
+            return JsonResponse({'error': str(e)}, status=400)
+
+    # If it's a GET request, just render the page with the file upload form
+    form = UploadExcelForm()
+    return render(request, 'ers_evaluation/edit_data_randomization.html', {'form': form})

@@ -4,129 +4,196 @@
 <head>
     <title>Evalvacija</title>
     <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" >
-    <link rel="stylesheet" type="text/css" href="{% static "style/style.css" %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --inter-color: #658E9C; /* Color for interactables like button and sliders... */
+            --inter-color-darkened: #50727d; /* Darkened version of the interactable color */
+            --main-color: #8CBA80; /* Main color for the page */
+            --secondary-color: #daddaa; /* Secondary color for the page */
+            --secondary-color-ligtened: #eff0d9;
+            --secondary-color-darkened: #b4b59f;
+            --accent-color: #282331; /* Accent color for the page */
+        }
+
+        body, html {
+            height: 100%;
+        }
+
+        p {
+            font-size: 1.2em;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            gap: 5px;
+            padding: 5px;
+        }
+
+        .container {
+            display: flex;
+            flex: 2; /* Takes 2/3 of the remaining height */
+            gap: 5px;
+        }
+
+        .info-box {
+            width: calc(66.66% - 2.5px);
+            background-color: lightblue;
+            padding: 10px;
+        }
+
+        .text-box {
+            width: calc(33.33% - 2.5px);
+            background-color: #FDFA72;
+            padding: 10px;
+        }
+
+        .slider-container {
+            flex: 1; /* Takes 1/3 of the remaining height */
+            background-color: lightgreen;
+            padding: 10px;
+        }
+
+        .slider {
+            margin-top: 10px;
+            accent-color: var(--inter-color);
+        }
+
+        .btn {
+            background-color: var(--inter-color);
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px; /*   4px 10px; */
+            cursor: pointer;
+            border-radius: 12px;
+        }
+        
+        .btn:hover {
+            background-color: var(--inter-color-darkened);
+        }
+    </style>
     <script src="{% static 'js/slider.js' %}"></script>
 </head>
 <body>
-    {% include 'ers_evaluation/top_bar.html' %}
-    <header>
-        <h1>Evalvacijska stran</h1>
-    </header>
     <form method="post">
         {% csrf_token %}
-        <ul>
-            {% if recommendation and evaluation %} <!-- This is the case where back is used and evaluation also exists. -->
-                <li>
-                    <b>Primer {{ evaluation_number }} / {{ max_evaluations }}:</b><br><br>
-                    <b>Priporočilo:</b> {{ recommendation.recommendation_text }}<br>
-                    <b>Kontekst [čas, kraj]: </b>[{{ recommendation.cntx_t }}, {{ recommendation.cntx_p }}]</b><br>
-                    <b>Zdrave aktivnosti:</b> {{ recommendation.answer }}<br>
-                    <b>LLM tekst:</b> {{ recommendation.llm_text }}<br>                    
-                    <div style="height: 20px;"></div>
-                    <label for="rating_{{ recommendation.id }}">Ocena: <span id="slider-value-{{ recommendation.id }}">{{ evaluation.rating }}</span></label>
-                    <div style="position: relative; width: 100%; height: 40px;">
-                        <input 
-                            type="range" 
-                            id="rating_{{ recommendation.id }}" 
-                            name="rating_{{ recommendation.id }}" 
-                            min="1" 
-                            max="5"
-                            step="1"
-                            value="{{ evaluation.rating }}"
-                            oninput="updateSliderValue('rating_{{ recommendation.id }}', 'slider-value-{{ recommendation.id }}')"
-                            list="steplist"
-                            class="slider">
-                            <datalist id="steplist">
-                                <option value="1"></option>
-                                <option value="2"></option>
-                                <option value="3"></option>
-                                <option value="4"></option>
-                                <option value="5"></option>
-                            </datalist>
-                            <div style="position: absolute; bottom: -40px; width: 100%; display: flex; justify-content: space-between; padding: 10px 10px 0px 0px;">
-                                <span style="text-align: left; width: 23%;">1 - Popolnoma<br>neustrezno</span>
-                                <span style="text-align: left; width: 17%;">2 - Neustrezno</span>
-                                <span style="text-align: center; width: 20%;">3 - Srednje</span>
-                                <span style="text-align: right; width: 17%;">4 - Ustrezno</span>
-                                <span style="text-align: right; width: 23%;">5 - Zelo<br>ustrezno</span>
-                            </div>
+
+        <div class="wrapper">
+            <div class="container">
+                <!-- First div - Annot -->
+                <div class="info-box">
+                    <b style="font-size: 1.5em;">Podatki o uporabniku:</b>
+                    <div style="text-align: center;">
+                        <img src="{% static annot_path %}" alt="Slika" style="display: inline-block;">
                     </div>
-                    <div style="height: 50px;"></div>
-                    <label for="comment_{{ recommendation.id }}">Komentar:</label>
-                    <textarea id="comment_{{ recommendation.id }}" name="comment_{{ recommendation.id }}" rows="3" cols="40" style="width: calc(100% - 20px);">{{ evaluation.comment }}</textarea>
-                </li>
-                <input type="hidden" name="back_btn_flag" value="True">
-                <input type="hidden" name="evaluation_id" value="{{ evaluation.id }}">
-            {% elif recommendation %} <!-- This is the normal case where evaluation does not exist. -->
-                <li>
-                    <b>Primer {{ evaluation_number }} / {{ max_evaluations }}:</b><br><br>
-                    <b>Priporočilo:</b> {{ recommendation.recommendation_text }}<br>
-                    <b>Kontekst [čas, kraj]: </b>[{{ recommendation.cntx_t }}, {{ recommendation.cntx_p }}]</b><br>
-                    <b>Zdrave aktivnosti:</b> {{ recommendation.answer }}<br>
-                    <b>LLM tekst:</b> {{ recommendation.llm_text }}<br>                    
-                    <div style="height: 20px;"></div>
-                    <label for="rating_{{ recommendation.id }}">Ocena: <span id="slider-value-{{ recommendation.id }}">3</span></label>
-                    <div style="position: relative; width: 100%; height: 40px;">
-                        <input 
-                            type="range" 
-                            id="rating_{{ recommendation.id }}" 
-                            name="rating_{{ recommendation.id }}" 
-                            min="1" 
-                            max="5"
-                            step="1"
-                            value="3" 
-                            oninput="updateSliderValue('rating_{{ recommendation.id }}', 'slider-value-{{ recommendation.id }}')"
-                            list="steplist"
-                            class="slider">
-                        <datalist id="steplist">
-                            <option value="1"></option>
-                            <option value="2"></option>
-                            <option value="3"></option>
-                            <option value="4"></option>
-                            <option value="5"></option>
-                        </datalist>
-                        <div style="position: absolute; bottom: -40px; width: 100%; display: flex; justify-content: space-between; padding: 10px 10px 0px 0px;">
-                            <span style="text-align: left; width: 23%;">1 - Popolnoma<br>neustrezno</span>
-                            <span style="text-align: left; width: 17%;">2 - Neustrezno</span>
-                            <span style="text-align: center; width: 20%;">3 - Srednje</span>
-                            <span style="text-align: right; width: 17%;">4 - Ustrezno</span>
-                            <span style="text-align: right; width: 23%;">5 - Zelo<br>ustrezno</span>
+                </div>
+                
+
+                <!-- Second div - Texts -->
+                <div class="text-box">
+                    <b style="font-size: 1.5em;">Predlogi s situacijo in pojasnili:</b>
+                    
+                    {% for activity_text in activity_texts %}
+                    <div style="padding: 10px; border: 1px solid black; border-radius: 10px; margin-top: 10px;">
+                        <div>
+                            <p>Sitaucija:</p>
+                            <div style="padding-left: 20px;">
+                                <p>čas: {{ recommendation.context_time }}</p>
+                                <p>kraj: {{ recommendation.context_place }}</p>
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <p>Pojasnilo:</p>
+                            <div style="padding-left: 20px;">
+                                <p>{{ activity_text }}</p>
+                            </div>
                         </div>
                     </div>
-                    <div style="height: 50px;"></div>
-                    <label for="comment_{{ recommendation.id }}">Komentar:</label>
-                    <textarea id="comment_{{ recommendation.id }}" name="comment_{{ recommendation.id }}" rows="3" cols="40" style="width: calc(100% - 20px);"></textarea>
-                </li>
-                <input type="hidden" name="back_btn_flag" value="False">
-            {% else %}
-                <li>Nobenega priporočila ni navoljo.</li>
-            {% endif %}
-        </ul>
+                    {% endfor %}
+                
+                </div>
+            </div>
+            
+            <!-- Third div - Slider & Button -->
+            <div class="slider-container">
+                <label for="rating_{{ recommendation.id }}">
+                    <b style="font-size: 1.5em;">
+                        Ocena: <span id="slider-value-{{ recommendation.id }}">3</span>
+                    </b>        
+                </label>
+
+                <div style="position: relative; width: 100%; height: 40px;">
+                    <input 
+                        type="range" 
+                        id="rating_{{ recommendation.id }}" 
+                        name="rating_{{ recommendation.id }}" 
+                        min="1" 
+                        max="5"
+                        step="1"
+                        value="{{ evaluation.rating }}"
+                        oninput="updateSliderValue('rating_{{ recommendation.id }}', 'slider-value-{{ recommendation.id }}')"
+                        list="steplist"
+                        class="slider">
+                    <datalist id="steplist">
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option value="3"></option>
+                        <option value="4"></option>
+                        <option value="5"></option>
+                    </datalist>
+                    <div style="position: absolute; bottom: -40px; width: 100%; display: flex; justify-content: space-between; padding: 10px 10px 0px 0px;">
+                        <span style="text-align: left; width: 23%;">1 - Zelo<br>neustrezno</span>
+                        <span style="text-align: left; width: 17%;">2 - Neustrezno</span>
+                        <span style="text-align: center; width: 20%;">3 - Niti ustrezno<br>niti neustrezno</span>
+                        <span style="text-align: right; width: 17%;">4 - Ustrezno</span>
+                        <span style="text-align: right; width: 23%;">5 - Zelo<br>ustrezno</span>
+                    </div>
+                </div>
+                
+                <div style="height: 100px;"></div>
+                
+                <div style="display: flex; align-items: flex-end; justify-content: space-between; width: 100%;">
+                    <div style="flex: 1">
+                        <b style="font-size: 1.5em;">{{ evaluation_number }} / {{ max_evaluations }}</b><br><br>
+                    </div>
+                    <div style="flex: 1; text-align: right">
+                        <button 
+                            type="submit" 
+                            name="action"
+                            value="Save & Continue"
+                            class="btn" 
+                            style="margin-right: 10px;">
+                            Potrdi in nadaljuj
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
         <input type="hidden" name="user_id" value="{{ user_id }}">
         <input type="hidden" name="recommendation_id" value="{{ recommendation.id }}">
-        <input type="hidden" name="previous_evaluations_id" value="{{ previous_evaluations_id }}">
         <input type="hidden" name="evaluation_number" value="{{ evaluation_number }}">
-        <button 
-            type="submit" 
-            name="action"
-            value="Save & Continue"
-            class="btn" 
-            style="float: right; margin-right: 10px"
-            >Potrdi in nadaljuj</button>
-        {% if evaluation_number > 1 %}
-            <button 
-                type="submit"
-                name="action"
-                value="back"
-                class="btn"
-                style="float: left; margin-left: 10px"
-                >Nazaj</button>
-        {% endif %}
-        <button 
-            type="button" 
-            class="btn" 
-            style="float: right" 
-            onclick="location.href='{% url 'index' %}'">Izhod brez shrambe</button>
+    
     </form>
 </body>
 </html>

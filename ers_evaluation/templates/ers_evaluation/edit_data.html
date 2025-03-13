@@ -1,0 +1,56 @@
+<!-- edit_data.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uredi podatke</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" >
+    <link rel="stylesheet" type="text/css" href="{% static "style/style.css" %}">
+</head>
+<body>
+    {% include 'ers_evaluation/top_bar.html' %}
+    <header>
+        <h1>Uredi podatke</h1>
+    </header>
+    <div style="padding-left: 20px">
+        <b style="font-size: 1.2em">Z NAMEŠČANJEM NOVIH PODATKOV BODO IZBRISANI PREJŠNJI IN VSE EVALVACIJE NAREJENE NA PREJŠNJIH</b>
+        <p> Izberi excel s podatki, ki jih želiš v aplikaciji. Trenutni podatki bodo izbrisani in nadomeščeni z novimi. </p>
+    </div>
+
+    <div style="padding-left: 20px">
+        <!-- Form to upload Excel file -->
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="button-group">
+                {{ form.as_p }}
+                <button class="btn" type="submit">Naloži Excel</button>
+            </div>
+        </form>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        // Handle the form submission and show the result message
+        const form = document.querySelector('form');
+        form.onsubmit = function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            fetch('', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').textContent = data.message || data.error;
+            })
+            .catch(error => {
+                document.getElementById('result').textContent = "Error: " + error;
+            });
+        };
+    </script>
+</body>
+</html>
