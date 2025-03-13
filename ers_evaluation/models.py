@@ -32,4 +32,28 @@ class Evaluation(models.Model):
     
     def __int__(self):
         return self.rating
+    
+
+class Randomization(models.Model):
+    rnd1 = models.IntegerField()
+    rnd2 = models.IntegerField()
+    rnd3 = models.IntegerField()
+    rnd4 = models.IntegerField()
+    rnd5 = models.IntegerField()
+    rnd6 = models.IntegerField()
+    rnd7 = models.IntegerField()
+    rnd8 = models.IntegerField()
+    rnd9 = models.IntegerField()
+    rnd10 = models.IntegerField()
+    rnd11 = models.IntegerField()
+    rnd12 = models.IntegerField()
+    rnd13 = models.IntegerField()
+    rnd14 = models.IntegerField()
+    rnd15 = models.IntegerField()
+    rnd16 = models.IntegerField()
+    rnd17 = models.IntegerField()
+    rnd18 = models.IntegerField()
+    rnd19 = models.IntegerField()
+    rnd20 = models.IntegerField()
+
 

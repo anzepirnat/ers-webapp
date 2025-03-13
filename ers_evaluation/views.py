@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, Http404
 import random
-from .models import Recommendation, Evaluation, RecsContextsExplsA3
+from .models import Recommendation, Evaluation, RecsContextsExplsA3, Randomization
 from django.contrib.auth.decorators import login_required
 import ast
 from .utils import remove_last_comma
@@ -33,8 +33,14 @@ def evaluation(request):
     # Filter out recommendations that the user has already evaluated
     completed_evaluations_recommendation_id = [evaluation.recommendation.id for evaluation in completed_evaluations]
     unevaluated_recommendations = recommendations.exclude(id__in=completed_evaluations_recommendation_id)
+    # Selecting text will work based on user_id, so basically:
+    # 1. Get all Randomization table
+    # 2. Get correct column the user 
+    # 3. Go through the rows and check for each if the id is in 
+    unevaluated_recommendations_ids = [rec.id for rec in list(unevaluated_recommendations)]
     try:
         selected_text = unevaluated_recommendations[0]
+        log.info(f"[rec.id for rec in list(unevaluated_recommendations)]: {unevaluated_recommendations_ids}")
     except IndexError as e:
         context = {
             "max_evaluations": MAX_EVALUATIONS,
@@ -123,7 +129,7 @@ def edit_evaluation(request):
     }
     return render(request, 'ers_evaluation/edit_evaluation.html', context)
 
-from .utils import excel_to_db, log
+from .utils import excel_to_db, log, excel_to_db_randomization
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from .forms import UploadExcelForm
@@ -152,3 +158,23 @@ def edit_data(request):
     # If it's a GET request, just render the page with the file upload form
     form = UploadExcelForm()
     return render(request, 'ers_evaluation/edit_data.html', {'form': form})
+
+
+@login_required
+def edit_data_randomization(request):
+    if request.method == 'POST' and request.FILES['excel_file']:
+        try:
+            excel_file = request.FILES['excel_file'] # Get new data
+            Randomization.objects.all().delete() # Delete old data
+            reset_auto_increment('ers_evaluation_recscontextsexplsa3') # Id to 1
+            result = excel_to_db_randomization(excel_file) # Write new data
+            
+            return JsonResponse({'message': result}, status=200)
+        
+        except ValidationError as e:
+            log.error("Validation error: %s", e)
+            return JsonResponse({'error': str(e)}, status=400)
+
+    # If it's a GET request, just render the page with the file upload form
+    form = UploadExcelForm()
+    return render(request, 'ers_evaluation/edit_data_randomization.html', {'form': form})
