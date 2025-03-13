@@ -1,0 +1,157 @@
+:root {
+    --inter-color: #658E9C; /* Color for interactables like button and sliders... */
+    --inter-color-darkened: #50727d; /* Darkened version of the interactable color */
+    --main-color: #8CBA80; /* Main color for the page */
+    --secondary-color: #daddaa; /* Secondary color for the page */
+    --secondary-color-ligtened: #eff0d9;
+    --secondary-color-darkened: #b4b59f;
+    --accent-color: #282331; /* Accent color for the page */
+}
+
+
+.container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.container-left {
+    text-align: left;
+    margin-top: 50px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+/* Button Group */
+.button-group {
+    margin-top: 20px;
+}
+
+/* Buttons */
+.btn {
+    background-color: var(--inter-color);
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px; /*   4px 10px; */
+    cursor: pointer;
+    border-radius: 12px;
+}
+
+.btn:hover {
+    background-color: var(--inter-color-darkened);
+}
+
+.btn-small {
+    background-color: var(--inter-color);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px; /*   4px 10px; */
+    cursor: pointer;
+    border-radius: 12px;
+}
+
+.btn-small:hover {
+    background-color: var(--inter-color-darkened);
+}
+
+.slider {
+    margin-top: 10px;
+    accent-color: var(--inter-color);
+}
+
+.top-bar {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: flex;
+    gap: 10px; /* Spacing between icons */
+    align-items: center; /* Vertical alignment */
+    height: auto;
+    background: none;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+.top-bar .icon {
+    height: 30px; /* Adjust size of icons */
+    width: auto; /* Maintain aspect ratio */
+    cursor: pointer; /* Pointer cursor on hover */
+    display: block;
+}
+
+.logout-form {
+    margin: 0;
+    padding: 0;
+    display: inline; /* Makes it inline with other elements */
+}
+
+.logout-form .icon-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer; /* Pointer cursor on hover */
+    display: flex;
+    align-items: center;
+}
+
+body {
+    background-color: var(--main-color); /* Choose your desired background color */
+}
+
+form {
+    margin-top: 20px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input[type="range"] {
+    width: 100%;
+    margin: 10px 0;
+}
+
+textarea {
+    width: 100%;
+    margin: 10px 0;
+    margin-right: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--secondary-color-darkened);
+    background-color: var(--secondary-color-ligtened);
+}
+
+/* List Items */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    background-color: var(--secondary-color);
+    margin: 10px 10px 10px 10px;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid var(--secondary-color-darkened);
+}
+
+li strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+h1 {
+    margin-left: 10px;
+    color: var(--accent-color);
+}
