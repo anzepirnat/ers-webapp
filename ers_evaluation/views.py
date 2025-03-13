@@ -32,24 +32,20 @@ def evaluation(request):
     
     # Filter out recommendations that the user has already evaluated
     completed_evaluations_recommendation_id = [evaluation.recommendation.id for evaluation in completed_evaluations]
-    unevaluated_recommendations = recommendations.exclude(id__in=completed_evaluations_recommendation_id)
+    unevaluated_recommendations_ids = set(recommendations.exclude(id__in=completed_evaluations_recommendation_id).values_list('id', flat=True))
+    
     # Selecting text will work based on user_id, so basically:
     # 1. Get all Randomization table
-    # 2. Get correct column the user 
-    # 3. Go through the rows and check for each if the id is in 
-    unevaluated_recommendations_ids = [rec.id for rec in list(unevaluated_recommendations)]
-    try:
-        selected_text = unevaluated_recommendations[0]
-        log.info(f"[rec.id for rec in list(unevaluated_recommendations)]: {unevaluated_recommendations_ids}")
-    except IndexError as e:
-        context = {
-            "max_evaluations": MAX_EVALUATIONS,
-            "completed_evaluations_count": completed_evaluations_count
-        }
-        return render(request, 'ers_evaluation/finished.html', context)
-    except Exception as e:
-        log.error(f"Unexpected error: {e}")
-        raise Http404(f"Unexpected error: {e}")
+    randomization = Randomization.objects.all()
+    # 2. Get correct column for the user 
+    user_rnd_values = randomization.values_list(f"rnd{request.user.id}", flat=True)
+    # 3. Go through the rows and check for each if the id is in it. return error if it isnt found
+    selected_text = None
+    for rnd_value in user_rnd_values:
+        if rnd_value in unevaluated_recommendations_ids:
+            selected_text = recommendations.get(id=rnd_value)
+            break
+    if not selected_text: raise Http404("There are no recommendations to evaluate.")
     
     # choosing the image to display
     annot_path = f"annots/annotImg_uID-{selected_text.elder_id}.png"
