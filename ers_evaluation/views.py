@@ -4,7 +4,7 @@ import random
 from .models import Recommendation, Evaluation, RecsContextsExplsA3
 from django.contrib.auth.decorators import login_required
 import ast
-from .utils import remove_comma
+from .utils import remove_last_comma
 
 MAX_EVALUATIONS = 20
 
@@ -33,19 +33,32 @@ def evaluation(request):
     # Filter out recommendations that the user has already evaluated
     completed_evaluations_recommendation_id = [evaluation.recommendation.id for evaluation in completed_evaluations]
     unevaluated_recommendations = recommendations.exclude(id__in=completed_evaluations_recommendation_id)
-    selected_text = unevaluated_recommendations[0]
+    try:
+        selected_text = unevaluated_recommendations[0]
+    except IndexError as e:
+        context = {
+            "max_evaluations": MAX_EVALUATIONS,
+            "completed_evaluations_count": completed_evaluations_count
+        }
+        return render(request, 'ers_evaluation/finished.html', context)
+    except Exception as e:
+        log.error(f"Unexpected error: {e}")
+        raise Http404(f"Unexpected error: {e}")
     
     # choosing the image to display
     annot_path = f"annots/annotImg_uID-{selected_text.elder_id}.png"
     
     log.info(f"selected_text.id: {selected_text.id}")
     
+    activity_texts = selected_text.activity_texts.split(", ")
+    
     context = {
         "max_evaluations": MAX_EVALUATIONS,
         "evaluation_number": completed_evaluations_count + 1,
         "recommendation": selected_text,
         "user_id": request.user.id,
-        "annot_path": annot_path
+        "annot_path": annot_path,
+        "activity_texts": activity_texts
     }
     
     if request.method == "POST":

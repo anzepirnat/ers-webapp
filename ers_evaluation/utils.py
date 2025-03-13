@@ -33,7 +33,7 @@ def remove_parantheses(text):
 def remove_quotes(text):
     return text.replace("'", "")
 
-def remove_comma(text):
+def remove_last_comma(text):
     if text[-1] == ",": 
         return text.replace(',', '')
     else:
@@ -43,7 +43,10 @@ def replace_slo_words(text):
     return text.replace('č', 'c').replace('ć', 'c').replace('š', 's').replace('đ', 'd').replace('ž', 'z')
 
 def filter_text(text):
-    return remove_parantheses(remove_quotes(replace_slo_words(text)))
+    return remove_last_comma(remove_parantheses(remove_quotes(replace_slo_words(text))))
+
+def to_list(text):
+    return text.split(", ")
     
 
 def excel_to_db(file):
@@ -56,6 +59,7 @@ def excel_to_db(file):
     if sheet_1 is not None:
         total_rows = len(sheet_1)
         for _, row in tqdm(sheet_1.iterrows(), total=total_rows, desc="Nalaganje podatkov", unit="vrstic"):
+            #log.debug(f"activity_texts: {to_list(filter_text(row['actTxt_lst']))}, type(activity_texts): {type(to_list(filter_text(row['actTxt_lst'])))}")
             RecsContextsExplsA3.objects.create(
                 elder_id=row['uID'],
                 activity_ids=filter_text(row['actID_lst']),

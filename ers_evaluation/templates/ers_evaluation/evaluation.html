@@ -27,6 +27,10 @@
             height: 100%;
         }
 
+        p {
+            font-size: 1.2em;
+        }
+
         input[type="range"] {
             width: 100%;
             margin: 10px 0;
@@ -54,7 +58,7 @@
 
         .text-box {
             width: calc(33.33% - 2.5px);
-            background-color: var(--secondary-color);
+            background-color: #FDFA72;
             padding: 10px;
         }
 
@@ -95,19 +99,20 @@
 
         <div class="wrapper">
             <div class="container">
-                <!-- First div - Personal Info -->
+                <!-- First div - Annot -->
                 <div class="info-box">
                     <b style="font-size: 1.5em;">Podatki o uporabniku:</b>
-                    <p>Staros: 70</p>
-                    <p>Spol: Male</p>
-                    <img src="{% static annot_path %}" alt="Slika" class="profile-img">
+                    <div style="text-align: center;">
+                        <img src="{% static annot_path %}" alt="Slika" style="display: inline-block;">
+                    </div>
                 </div>
                 
 
                 <!-- Second div - Texts -->
                 <div class="text-box">
                     <b style="font-size: 1.5em;">Predlogi s situacijo in pojasnili:</b>
-
+                    
+                    {% for activity_text in activity_texts %}
                     <div style="padding: 10px; border: 1px solid black; border-radius: 10px; margin-top: 10px;">
                         <div>
                             <p>Sitaucija:</p>
@@ -119,19 +124,23 @@
                         <div style="margin-top: 10px;">
                             <p>Pojasnilo:</p>
                             <div style="padding-left: 20px;">
-                                <p>{{ recommendation.activity_texts }}</p>
+                                <p>{{ activity_text }}</p>
                             </div>
                         </div>
                     </div>
+                    {% endfor %}
                 
                 </div>
             </div>
             
-            <!-- Third div - Rating Slider & Button -->
+            <!-- Third div - Slider & Button -->
             <div class="slider-container">
-                <label for="rating_{{ recommendation.id }}"><b style="font-size: 1.5em;">Ocena</b>: 
-                    <span id="slider-value-{{ recommendation.id }}">{{ evaluation.rating }}</span>
+                <label for="rating_{{ recommendation.id }}">
+                    <b style="font-size: 1.5em;">
+                        Ocena: <span id="slider-value-{{ recommendation.id }}">3</span>
+                    </b>        
                 </label>
+
                 <div style="position: relative; width: 100%; height: 40px;">
                     <input 
                         type="range" 
@@ -152,9 +161,9 @@
                         <option value="5"></option>
                     </datalist>
                     <div style="position: absolute; bottom: -40px; width: 100%; display: flex; justify-content: space-between; padding: 10px 10px 0px 0px;">
-                        <span style="text-align: left; width: 23%;">1 - Popolnoma<br>neustrezno</span>
+                        <span style="text-align: left; width: 23%;">1 - Zelo<br>neustrezno</span>
                         <span style="text-align: left; width: 17%;">2 - Neustrezno</span>
-                        <span style="text-align: center; width: 20%;">3 - Srednje</span>
+                        <span style="text-align: center; width: 20%;">3 - Niti ustrezno<br>niti neustrezno</span>
                         <span style="text-align: right; width: 17%;">4 - Ustrezno</span>
                         <span style="text-align: right; width: 23%;">5 - Zelo<br>ustrezno</span>
                     </div>
