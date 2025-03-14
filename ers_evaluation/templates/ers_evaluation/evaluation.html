@@ -25,10 +25,12 @@
 
         body, html {
             height: 100%;
+            font-family: sans-serif;
         }
 
-        p {
+        p, b {
             font-size: 1.2em;
+            font-family: sans-serif;
         }
 
         input[type="range"] {
@@ -81,7 +83,8 @@
             text-align: center;
             text-decoration: none;
             display: inline-block;
-            font-size: 14px;
+            font-size: 1.2em;
+            font-family: sans-serif;
             margin: 4px 2px; /*   4px 10px; */
             cursor: pointer;
             border-radius: 12px;
@@ -101,7 +104,7 @@
             <div class="container">
                 <!-- First div - Annot -->
                 <div class="info-box">
-                    <b style="font-size: 1.5em;">Podatki o uporabniku:</b>
+                    <b style="font-size: 1.5em; font-family: sans-serif;">Podatki o uporabniku:</b>
                     <div style="text-align: center;">
                         <img src="{% static annot_path %}" alt="Slika" style="display: inline-block;">
                     </div>
@@ -122,7 +125,7 @@
                             </div>
                         </div>
                         <div style="margin-top: 10px;">
-                            <p>Pojasnilo:</p>
+                            <p>Nasvet s pojasnilom:</p>
                             <div style="padding-left: 20px;">
                                 <p>{{ activity_text }}</p>
                             </div>
@@ -161,11 +164,11 @@
                         <option value="5"></option>
                     </datalist>
                     <div style="position: absolute; bottom: -40px; width: 100%; display: flex; justify-content: space-between; padding: 10px 10px 0px 0px;">
-                        <span style="text-align: left; width: 23%;">1 - Zelo<br>neustrezno</span>
-                        <span style="text-align: left; width: 17%;">2 - Neustrezno</span>
-                        <span style="text-align: center; width: 20%;">3 - Niti ustrezno<br>niti neustrezno</span>
-                        <span style="text-align: right; width: 17%;">4 - Ustrezno</span>
-                        <span style="text-align: right; width: 23%;">5 - Zelo<br>ustrezno</span>
+                        <span style="text-align: left; width: 23%; font-family: sans-serif; font-size: 1.2em;">1 - Zelo<br>neustrezno</span>
+                        <span style="text-align: left; width: 17%; font-family: sans-serif; font-size: 1.2em;">2 - Neustrezno</span>
+                        <span style="text-align: center; width: 20%; font-family: sans-serif; font-size: 1.2em;">3 - Niti ustrezno<br>niti neustrezno</span>
+                        <span style="text-align: right; width: 17%; font-family: sans-serif; font-size: 1.2em;">4 - Ustrezno</span>
+                        <span style="text-align: right; width: 23%; font-family: sans-serif; font-size: 1.2em;">5 - Zelo<br>ustrezno</span>
                     </div>
                 </div>
                 
