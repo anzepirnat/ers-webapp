@@ -50,40 +50,41 @@ def to_list(text):
     
 
 def excel_to_db(file):
-    # Read the Excel file with pandas (using openpyxl for .xlsx format)
-    excel_data = pd.read_excel(file, sheet_name=None, engine='openpyxl')
 
-    # Extract the specific sheets
+    excel_data = pd.read_excel(file, sheet_name=None, engine='openpyxl')
     sheet_1 = excel_data.get('Sheet1')
 
     if sheet_1 is not None:
         total_rows = len(sheet_1)
+        recommendation_objects = []
+        
         for _, row in tqdm(sheet_1.iterrows(), total=total_rows, desc="Nalaganje podatkov", unit="vrstic"):
-            #log.debug(f"activity_texts: {to_list(filter_text(row['actTxt_lst']))}, type(activity_texts): {type(to_list(filter_text(row['actTxt_lst'])))}")
-            RecsContextsExplsA3.objects.create(
+            recommendation_objects.append(RecsContextsExplsA3(
                 elder_id=row['uID'],
                 activity_ids=filter_text(row['actID_lst']),
                 activity_texts=filter_text(row['actTxt_lst']),
                 context_time=filter_text(row['C_T']),
                 context_place=filter_text(row['C_P']),
                 explanation=filter_text(row['Expl'])
-            )
+            ))
+            
+        if recommendation_objects:
+            RecsContextsExplsA3.objects.bulk_create(recommendation_objects)
 
     return "Data imported successfully!"
 
 
 def excel_to_db_randomization(file):
-    # Read the Excel file with pandas (using openpyxl for .xlsx format)
-    excel_data = pd.read_excel(file, sheet_name=None, engine='openpyxl')
 
-    # Extract the specific sheets
+    excel_data = pd.read_excel(file, sheet_name=None, engine='openpyxl')
     sheet_1 = excel_data.get('Sheet1')
 
     if sheet_1 is not None:
         total_rows = len(sheet_1)
+        randomization_objects = []
+
         for _, row in tqdm(sheet_1.iterrows(), total=total_rows, desc="Nalaganje podatkov", unit="vrstic"):
-            #log.debug(f"activity_texts: {to_list(filter_text(row['actTxt_lst']))}, type(activity_texts): {type(to_list(filter_text(row['actTxt_lst'])))}")
-            Randomization.objects.create(
+            randomization_objects.append(Randomization(
                 rnd1=row['anID1_rnd_uID'],
                 rnd2=row['anID2_rnd_uID'],
                 rnd3=row['anID3_rnd_uID'],
@@ -104,6 +105,9 @@ def excel_to_db_randomization(file):
                 rnd18=row['anID18_rnd_uID'],
                 rnd19=row['anID19_rnd_uID'],
                 rnd20=row['anID20_rnd_uID']
-            )
+            ))
+
+        if randomization_objects:
+            Randomization.objects.bulk_create(randomization_objects)
 
     return "Data imported successfully!"
