@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 import ast
 from .utils import remove_last_comma
 
-MAX_EVALUATIONS = 696
+MAX_EVALUATIONS = 679
 
 def index(request):
     return render(request, 'ers_evaluation/index.html')
@@ -52,7 +52,9 @@ def evaluation(request):
     
     log.info(f"selected_text.id: {selected_text.id}")
     
-    activity_texts = selected_text.activity_texts.split(", ")
+    activity_texts = selected_text.explanation
+    activity_texts = activity_texts.replace("’", "").replace("‘", "")
+    activity_texts = activity_texts.split("; ")
     
     context = {
         "max_evaluations": MAX_EVALUATIONS,
