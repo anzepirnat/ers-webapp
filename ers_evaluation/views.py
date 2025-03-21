@@ -16,13 +16,15 @@ def index(request):
 def evaluation(request):
     
     # Get all recommendations, if there are no recommendations, raise an error
-    recommendations = RecsContextsExplsA3.objects.all()
-    if not recommendations.exists():
+    recommendation_ids = RecsContextsExplsA3.objects.values_list("id", flat=True)
+    if not recommendation_ids:
         raise Http404("There are no recommendations to evaluate.")
-    
+
     # Get evalutions that the user has already done, if there are more than XX evaluations, thank them for work
-    completed_evaluations = Evaluation.objects.filter(user_id=request.user.id)
-    completed_evaluations_count = completed_evaluations.count()
+    completed_evaluations_recommendation_id = Evaluation.objects.filter(user_id=request.user.id).values_list("recommendation_id", flat=True)
+    completed_evaluations_recommendation_id = set(completed_evaluations_recommendation_id)
+    completed_evaluations_count = len(completed_evaluations_recommendation_id)
+    
     if completed_evaluations_count >= MAX_EVALUATIONS:
         context = {
             "max_evaluations": MAX_EVALUATIONS,
@@ -31,21 +33,16 @@ def evaluation(request):
         return render(request, 'ers_evaluation/finished.html', context)
     
     # Filter out recommendations that the user has already evaluated
-    completed_evaluations_recommendation_id = [evaluation.recommendation.id for evaluation in completed_evaluations]
-    unevaluated_recommendations_ids = set(recommendations.exclude(id__in=completed_evaluations_recommendation_id).values_list('id', flat=True))
+    unevaluated_recommendations_ids = set(recommendation_ids) - completed_evaluations_recommendation_id
     
-    # Selecting text will work based on user_id, so basically:
-    # 1. Get all Randomization table
-    randomization = Randomization.objects.all()
-    # 2. Get correct column for the user 
-    user_rnd_values = randomization.values_list(f"rnd{request.user.id}", flat=True)
-    # 3. Go through the rows and check for each if the id is in it. return error if it isnt found
+    user_rnd_values = Randomization.objects.values_list(f"rnd{request.user.id}", flat=True)
     selected_text = None
     for rnd_value in user_rnd_values:
         if rnd_value in unevaluated_recommendations_ids:
-            selected_text = recommendations.get(id=rnd_value)
+            selected_text = RecsContextsExplsA3.objects.get(id=rnd_value)
             break
-    if not selected_text: raise Http404("There are no recommendations to evaluate.")
+    if not selected_text: 
+        raise Http404("There are no recommendations to evaluate.")
     
     # choosing the image to display
     annot_path = f"annots/annotImg_uID-{selected_text.elder_id}.png"
@@ -68,19 +65,18 @@ def evaluation(request):
     if request.method == "POST":
         user_id = request.POST.get("user_id")
         recommendation_id = int(request.POST.get("recommendation_id"))
-        recommendation = recommendations.filter(id=recommendation_id).first()
         action = request.POST.get("action")
 
         if action == "Save & Continue":
                                         
-            rating = request.POST.get(f"rating_{recommendation.id}")
-            comment = request.POST.get(f"comment_{recommendation.id}")
+            rating = request.POST.get(f"rating_{recommendation_id}")
+            comment = request.POST.get(f"comment_{recommendation_id}")
             
             Evaluation.objects.create(
-                recommendation=recommendation,
                 user_id=user_id,
                 rating=rating,
-                comment=comment if comment else ""
+                comment=comment if comment else "",
+                recommendation_id=recommendation_id
             )
                 
             return redirect('evaluation')
