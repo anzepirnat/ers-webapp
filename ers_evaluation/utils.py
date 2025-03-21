@@ -111,3 +111,7 @@ def excel_to_db_randomization(file):
             Randomization.objects.bulk_create(randomization_objects)
 
     return "Data imported successfully!"
+
+def read_excel(excel_path: str, column_name: str):
+    df = pd.read_excel(excel_path, engine='openpyxl')
+    return df[column_name].tolist()

@@ -4,7 +4,11 @@ import random
 from .models import Recommendation, Evaluation, RecsContextsExplsA3, Randomization
 from django.contrib.auth.decorators import login_required
 import ast
-from .utils import remove_last_comma
+from .utils import excel_to_db, log, excel_to_db_randomization, read_excel, remove_last_comma
+from django.core.exceptions import ValidationError
+from django.http import JsonResponse
+from .forms import UploadExcelForm
+from django.db import connection
 
 MAX_EVALUATIONS = 679
 
@@ -36,9 +40,15 @@ def evaluation(request):
     
     # Selecting text will work based on user_id, so basically:
     # 1. Get all Randomization table
-    randomization = Randomization.objects.all()
+    #randomization = Randomization.objects.all()
     # 2. Get correct column for the user 
-    user_rnd_values = randomization.values_list(f"rnd{request.user.id}", flat=True)
+    #user_rnd_values = randomization.values_list(f"rnd{request.user.id}", flat=True)
+    import os
+    from django.conf import settings
+
+    file_path = os.path.join(settings.BASE_DIR, "ers_evaluation", "localdata", "randomized_steps.xlsx")
+    log.debug(f"file_path: {file_path}")
+    user_rnd_values = read_excel(file_path, f"anID{request.user.id}_rnd_uID")
     # 3. Go through the rows and check for each if the id is in it. return error if it isnt found
     selected_text = None
     for rnd_value in user_rnd_values:
@@ -127,11 +137,6 @@ def edit_evaluation(request):
     }
     return render(request, 'ers_evaluation/edit_evaluation.html', context)
 
-from .utils import excel_to_db, log, excel_to_db_randomization
-from django.core.exceptions import ValidationError
-from django.http import JsonResponse
-from .forms import UploadExcelForm
-from django.db import connection
 
 def reset_auto_increment(table_name):
     """ Reset auto-increment counter for a table in MariaDB """
