@@ -40,11 +40,8 @@ def remove_last_comma(text):
     else:
         return text
 
-def replace_slo_words(text):
-    return text.replace('č', 'c').replace('ć', 'c').replace('š', 's').replace('đ', 'd').replace('ž', 'z')
-
 def filter_text(text):
-    return remove_last_comma(remove_parantheses(remove_quotes(replace_slo_words(text))))
+    return remove_last_comma(remove_parantheses(remove_quotes(text)))
 
 def to_list(text):
     return text.split(", ")
