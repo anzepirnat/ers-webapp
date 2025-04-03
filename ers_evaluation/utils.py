@@ -2,6 +2,7 @@ import pandas as pd
 import logging
 from .models import RecsContextsExplsA3, Randomization
 from tqdm import tqdm
+from django.db import connection
 
 class log:
     _logger = None
@@ -111,3 +112,9 @@ def excel_to_db_randomization(file):
             Randomization.objects.bulk_create(randomization_objects)
 
     return "Data imported successfully!"
+
+
+def reset_auto_increment(table_name):
+    """ Reset auto-increment counter for a table in MariaDB """
+    with connection.cursor() as cursor:
+        cursor.execute(f"ALTER TABLE {table_name} AUTO_INCREMENT = 1")

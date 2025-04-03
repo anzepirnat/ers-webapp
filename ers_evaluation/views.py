@@ -5,6 +5,10 @@ from .models import Recommendation, Evaluation, RecsContextsExplsA3, Randomizati
 from django.contrib.auth.decorators import login_required
 import ast
 from .utils import remove_last_comma
+from .utils import excel_to_db, log, excel_to_db_randomization, reset_auto_increment
+from django.core.exceptions import ValidationError
+from django.http import JsonResponse
+from .forms import UploadExcelForm
 
 MAX_EVALUATIONS = 679
 
@@ -123,16 +127,6 @@ def edit_evaluation(request):
     }
     return render(request, 'ers_evaluation/edit_evaluation.html', context)
 
-from .utils import excel_to_db, log, excel_to_db_randomization
-from django.core.exceptions import ValidationError
-from django.http import JsonResponse
-from .forms import UploadExcelForm
-from django.db import connection
-
-def reset_auto_increment(table_name):
-    """ Reset auto-increment counter for a table in MariaDB """
-    with connection.cursor() as cursor:
-        cursor.execute(f"ALTER TABLE {table_name} AUTO_INCREMENT = 1")
 
 @login_required
 def edit_data(request):
