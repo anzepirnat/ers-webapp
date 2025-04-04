@@ -135,7 +135,7 @@
                     <b style="font-size: 1.5em;">Predlogi s situacijo in pojasnili:</b>
                     
                     {% for activity_text in activity_texts %}
-                    <div style="padding: 10px; border: 1px solid black; border-radius: 10px; margin-top: 10px;">
+                    <div style="padding: 10px; border: {% if forloop.first %} 5px solid lightgreen {% else %} 1px solid black {% endif %}; border-radius: 10px; margin-top: 10px;">
                         <div>
                             <p>Situacija:</p>
                             <div style="padding-left: 20px;">
