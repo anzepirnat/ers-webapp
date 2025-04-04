@@ -134,7 +134,7 @@
                 <div class="text-box">
                     <b style="font-size: 1.5em;">Predlogi s situacijo in pojasnili:</b>
                     
-                    {% for activity_text in activity_texts %}
+                    {% for combined_text in combined_texts %}
                     <div style="padding: 10px; border: {% if forloop.first %} 5px solid lightgreen {% else %} 1px solid black {% endif %}; border-radius: 10px; margin-top: 10px;">
                         <div>
                             <p>Situacija:</p>
@@ -146,7 +146,7 @@
                         <div style="margin-top: 10px;">
                             <p>Nasvet s pojasnilom:</p>
                             <div style="padding-left: 20px;">
-                                <p>{{ activity_text }}</p>
+                                <p>{{ combined_text }}</p>
                             </div>
                         </div>
                     </div>

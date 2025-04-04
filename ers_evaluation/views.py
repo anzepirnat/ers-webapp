@@ -4,8 +4,7 @@ import random
 from .models import Recommendation, Evaluation, RecsContextsExplsA3, Randomization
 from django.contrib.auth.decorators import login_required
 import ast
-from .utils import remove_last_comma
-from .utils import excel_to_db, log, excel_to_db_randomization, reset_auto_increment
+from .utils import excel_to_db, log, excel_to_db_randomization, reset_auto_increment, get_combined_texts
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from .forms import UploadExcelForm
@@ -53,9 +52,7 @@ def evaluation(request):
     
     log.info(f"selected_text.id: {selected_text.id}")
     
-    activity_texts = selected_text.explanation
-    activity_texts = activity_texts.replace("’", "").replace("‘", "")
-    activity_texts = activity_texts.split("; ")
+    combined_texts = get_combined_texts(selected_text.activity_texts, selected_text.explanation)
     
     context = {
         "max_evaluations": MAX_EVALUATIONS,
@@ -63,7 +60,7 @@ def evaluation(request):
         "recommendation": selected_text,
         "user_id": request.user.id,
         "annot_path": annot_path,
-        "activity_texts": activity_texts
+        "combined_texts": combined_texts
     }
     
     if request.method == "POST":
