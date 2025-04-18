@@ -63,6 +63,8 @@ def excel_to_db(file):
                 activity_texts=filter_text(row['actTxt_lst']),
                 context_time=filter_text(row['C_T']),
                 context_place=filter_text(row['C_P']),
+                recommendation_context_time=filter_text(row['rec_C_T']),
+                recommendation_context_place=filter_text(row['rec_C_P']),
                 explanation=filter_text(row['Expl'])
             ))
             

@@ -136,14 +136,23 @@
                     
                     {% for combined_text in combined_texts %}
                     <div style="padding: 10px; border: {% if forloop.first %} 5px solid lightgreen {% else %} 1px solid black {% endif %}; border-radius: 10px; margin-top: 10px;">
-                        <div>
-                            <p>Situacija ob prejetju nasveta:</p>
-                            <div style="padding-left: 20px;">
-                                <p>čas: {{ recommendation.context_time }}</p>
-                                <p>kraj: {{ recommendation.context_place }}</p>
+                        <div style="display: flex; justify-content: space-between; gap: 10px;">
+                            <div style="flex: 1; padding-right: 10px; background-color: #FBEC5D; border-radius: 5px; padding: 10px;">
+                                <p>Situacija ob prejetju nasveta:</p>
+                                <div style="padding-left: 20px;">
+                                    <p>čas: {{ recommendation.context_time }}</p>
+                                    <p>kraj: {{ recommendation.context_place }}</p>
+                                </div>
+                            </div>
+                            <div style="flex: 1; padding-left: 10px; background-color: #FADA5E; border-radius: 5px; padding: 10px;">
+                                <p>Situacija ob izvedbi nasveta:</p>
+                                <div style="padding-left: 20px;">
+                                    <p>čas: {{ recommendation.recommendation_context_time }}</p>
+                                    <p>kraj: {{ recommendation.recommendation_context_place }}</p>
+                                </div>
                             </div>
                         </div>
-                        <div style="margin-top: 10px;">
+                        <div style="margin-top: 10px; background-color: #FDDA0D; border-radius: 5px; padding: 10px;">
                             <p>Nasvet s pojasnilom:</p>
                             <div style="padding-left: 20px;">
                                 <p>{{ combined_text }}</p>
