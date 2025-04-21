@@ -63,6 +63,8 @@ def excel_to_db(file):
                 activity_texts=filter_text(row['actTxt_lst']),
                 context_time=filter_text(row['C_T']),
                 context_place=filter_text(row['C_P']),
+                recommendation_context_time=filter_text(row['rec_C_T']),
+                recommendation_context_place=filter_text(row['rec_C_P']),
                 explanation=filter_text(row['Expl'])
             ))
             
@@ -115,3 +117,32 @@ def reset_auto_increment(table_name):
     """ Reset auto-increment counter for a table in MariaDB """
     with connection.cursor() as cursor:
         cursor.execute(f"ALTER TABLE {table_name} AUTO_INCREMENT = 1")
+        
+        
+def get_explanation_texts(explanation: str) -> list:
+    """ Get a list of explanations from the selected text. Enter the explanation as a string as it is in DB. """
+    explanation_texts = explanation.split(";; ")
+    return explanation_texts
+
+
+def get_recommendation_texts(recommendation: str) -> list:
+    recommendation_texts = recommendation.split(", ")
+    return recommendation_texts
+
+
+def get_combined_texts(recommendation: str, explanation: str) -> list:
+    """ Get a list of combined recommendation and explanation texts """
+    
+    recommendation_texts = get_recommendation_texts(recommendation)
+    explanation_texts = get_explanation_texts(explanation)
+    
+    # Replace last element of recommendation (".") with "; " 
+    recommendation_texts = [rec[:-1] + "; " for rec in recommendation_texts]
+    
+    # Make first element of explanation lowercase
+    explanation_texts = [exp[0].lower() + exp[1:] for exp in explanation_texts]
+    
+    combined_texts = [rec + exp for rec, exp in zip(recommendation_texts, explanation_texts)]
+    
+    return combined_texts
+

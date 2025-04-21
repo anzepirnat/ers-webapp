@@ -17,6 +17,8 @@ class RecsContextsExplsA3(models.Model):
     activity_texts = models.CharField(max_length=300) # actTxt_lst
     context_time = models.CharField(max_length=100) # C_T
     context_place = models.CharField(max_length=100) # C_P
+    recommendation_context_time = models.CharField(max_length=100, default="kadarkoli") # rec_C_T
+    recommendation_context_place = models.CharField(max_length=100, default="kjerkoli") # rec_C_P
     explanation = models.CharField(max_length=1000) # Expl
     
     def __str__(self):
