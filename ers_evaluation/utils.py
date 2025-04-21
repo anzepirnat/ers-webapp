@@ -121,8 +121,7 @@ def reset_auto_increment(table_name):
         
 def get_explanation_texts(explanation: str) -> list:
     """ Get a list of explanations from the selected text. Enter the explanation as a string as it is in DB. """
-    explanation_texts = explanation.replace("’", "").replace("‘", "")
-    explanation_texts = explanation_texts.split("; ")
+    explanation_texts = explanation.split(";; ")
     return explanation_texts
 
 
