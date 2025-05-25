@@ -2,10 +2,8 @@
 
 Application used to assess the AI generated explanations of the recommendation system.
 
-To run docker container, be in the same directory as the .env file and use:
-sudo docker run --env-file .env -p 8000:8000 ersapp-v1
+This application will be used as a part of my masters, more preciselsely; it will be utilized to gather feedback from psychology experts. The goal is for them to rate each explanation 1-5 and optionally provide feedback in a form of a comment.
 
-To run the app locally, use:
-python manage.py runserver 0.0.0.0:8000
+Currently it is running on AWS EC2 instance with database in AWS RDS.
 
-Datbase is running on AWS RDS: rds-instance-1.c1kscoawsrlb.eu-central-1.rds.amazonaws.com
+Note: The application is in Slovenian language as per requirement.
